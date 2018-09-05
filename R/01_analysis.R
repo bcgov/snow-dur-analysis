@@ -13,6 +13,8 @@
 
 library(dplyr) # data analysis
 library(tidyr) # gather function
+library(plyr) # ddply function for correlation test
+library(stringr) # split columns
 library(purrr) # extracting single elements from dataframe
 library(reshape2) # melt function
 library(rmapshaper) # simplify shapefiles for viz
@@ -29,19 +31,10 @@ df_full <- read.csv("../data/export_df.csv")
 ## column names indicate averaged results for three months
 dfo <- read.csv("../data/original_ONI.csv")
 
-## renaming columns with the middle month
-# colnames(dfo)[(grep("^[A-Z]{3}$", colnames(dfo)))] <- substr(colnames(dfo)[(grep("^[A-Z]{3}$", colnames(dfo)))], 2, 2)
-colnames(dfo) <- c("year", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
-
-## replacing Jan - May ONI with consecutive year's data (hydrological year Sept - Jun,
-## but summer season ends in May. Decision is made for complete seasonal summaries)
-for (i in 1:(nrow(dfo)-1)) {
-  dfo[i, c("Jan", "Feb", "Mar", "Apr", "May")] <- map(dfo[c("Jan", "Feb", "Mar", "Apr", "May")], i + 1)
-}
-
+## df_full analysis ####
 ## correlation with ONI by point
-df_bbl <- df_full[, c("lon", "lat", "COR_Sprg_Start", "COR_Sum_Start", "COR_Fall_Start", "COR_Wint_Start")]
-df_bbl <- melt(df_bbl, id.vars = c("lon", "lat"))
+# df_bbl <- df_full[, c("lon", "lat", "COR_Sprg_Start", "COR_Sum_Start", "COR_Fall_Start", "COR_Wint_Start")]
+# df_bbl <- melt(df_bbl, id.vars = c("lon", "lat"))
 
 ## snow start-end calender dataframe
 df_cal <- select(df_full, ID, grep("INTs_20", colnames(df_full)), grep("INTe_20", colnames(df_full)))
@@ -62,20 +55,52 @@ df_cal_long$day <- as.character(df_cal_long$day)
 ## remove NA
 df_cal_long <- df_cal_long[complete.cases(df_cal_long$date), ]
 
-## extracting hydrological season data from original dataframe
-dfo$season <- NA
-dfo[dfo$ONI == "DJF", "season"] <- "Winter"
-dfo[dfo$ONI == "MAM", "season"] <- "Spring"
-dfo[dfo$ONI == "JJA", "season"] <- "Summer"
-dfo[dfo$ONI == "SON", "season"] <- "Fall"
 
-df_oni <- dfo[!is.na(dfo$season), ]
+## dfo analysis ####
+## renaming columns with the middle month
+colnames(dfo) <- c("year", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+
+## replacing Jan - May ONI with consecutive year's data (hydrological year Sept - Jun,
+## but summer season ends in May. Decision is made for complete seasonal summaries)
+for (i in 1:(nrow(dfo)-1)) {
+  dfo[i, c("Jan", "Feb", "Mar", "Apr", "May")] <- map(dfo[c("Jan", "Feb", "Mar", "Apr", "May")], i + 1)
+}
+dfo <- dfo[-nrow(dfo), ]
+
+## preparing dataframe for correlation test of ONI months with each snow measurement
+df_oni_long <- df_full %>%
+  select(ECOPROVINCE_NAME, grep("SCI_20", colnames(df_full)), grep("INT_20", colnames(df_full)),
+         grep("INTs_20", colnames(df_full)), grep("INTe_20", colnames(df_full))) %>%
+  gather(key = measurements, value = value, -ECOPROVINCE_NAME)
+
+## splitting measurement name and year
+df_oni_long[, c("measurements", "year")] <- str_split_fixed(df_oni_long$measurements, "_", 2)
+
+## merging with ONI dataframe and melting by month names
+df_oni_long <- merge(df_oni_long, dfo)
+df_oni_long <- melt(df_oni_long, id.vars = c("year", "ECOPROVINCE_NAME", "measurements", "value"),
+                    variable.name = "month", value.name = "ONI")
+
+## Pearson correlation test by each ecoprovince
+df_oni <- df_oni_long %>%
+  ddply(.(ECOPROVINCE_NAME, measurements, month), summarise,
+        "cor" = cor.test(value, ONI, method = "pearson")$estimate,
+        "p_value" = cor.test(value, ONI, method = "pearson")$p.value)
+
+## extracting hydrological season data from original dataframe
+# dfo$season <- NA
+# dfo[dfo$ONI == "DJF", "season"] <- "Winter"
+# dfo[dfo$ONI == "MAM", "season"] <- "Spring"
+# dfo[dfo$ONI == "JJA", "season"] <- "Summer"
+# dfo[dfo$ONI == "SON", "season"] <- "Fall"
+#
+# df_oni <- dfo[!is.na(dfo$season), ]
 
 
 ## geospatial processing
 ## converting csv to sf
-df_bbl <- st_as_sf(df_bbl, coords = c("lon", "lat"))
-st_crs(df_bbl) <- st_crs(bc_bound())
+# df_bbl <- st_as_sf(df_bbl, coords = c("lon", "lat"))
+# st_crs(df_bbl) <- st_crs(bc_bound())
 
 ## preparing for map viz
 ecoprov <- st_intersection(ecoprovinces(), bc_bound())
