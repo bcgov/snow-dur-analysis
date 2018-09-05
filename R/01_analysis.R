@@ -13,6 +13,7 @@
 
 library(dplyr) # data analysis
 library(tidyr) # gather function
+library(purrr) # extracting single elements from dataframe
 library(reshape2) # melt function
 library(rmapshaper) # simplify shapefiles for viz
 library(bcmaps)
@@ -23,9 +24,20 @@ library(sf) # geospatial data processing
 ## COR_**** Correlation with tested variables; p_Season_Time: p-value
 df_full <- read.csv("../data/export_df.csv")
 
-## Ocean Nino Index (ONI) dataframe (by ecoprovince)
-dfo <- read.csv("../data/export_dfO.csv")
+## reading in Oceanic Nino Index (ONI) data from 2002-2018 from
+## http://origin.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php
+## column names indicate averaged results for three months
+dfo <- read.csv("../data/original_ONI.csv")
 
+## renaming columns with the middle month
+# colnames(dfo)[(grep("^[A-Z]{3}$", colnames(dfo)))] <- substr(colnames(dfo)[(grep("^[A-Z]{3}$", colnames(dfo)))], 2, 2)
+colnames(dfo) <- c("year", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+
+## replacing Jan - May ONI with consecutive year's data (hydrological year Sept - Jun,
+## but summer season ends in May. Decision is made for complete seasonal summaries)
+for (i in 1:(nrow(dfo)-1)) {
+  dfo[i, c("Jan", "Feb", "Mar", "Apr", "May")] <- map(dfo[c("Jan", "Feb", "Mar", "Apr", "May")], i + 1)
+}
 
 ## correlation with ONI by point
 df_bbl <- df_full[, c("lon", "lat", "COR_Sprg_Start", "COR_Sum_Start", "COR_Fall_Start", "COR_Wint_Start")]
