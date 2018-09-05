@@ -108,10 +108,10 @@ ecoprov <- ms_simplify(ecoprov, keep = 0.02, keep_shapes = TRUE)
 
 ## extracting relevant columns and calculating average snow cover index for each ecoprovinces
 df_prov <- df_full %>%
-  select(c(ID, grep("SCI_20", colnames(df_full)), ECOPROVINCE_NAME)) %>%
-  gather(key = variable, value = value, grep("SCI_20", colnames(df_full))) %>%
-  group_by(ECOPROVINCE_NAME, variable) %>%
-  summarise(SCI_avg = mean(value, na.rm = TRUE))
+  select(c(ECOPROVINCE_NAME, grep("SCI_20", colnames(df_full)))) %>%
+  gather(key = variable, value = value, -ECOPROVINCE_NAME) %>%
+  group_by(ECOPROVINCE_NAME, variable, add = TRUE) %>%
+  dplyr::summarise(SCI_avg = mean(value, na.rm = TRUE))
 
 df_prov <- df_prov[!is.na(df_prov$ECOPROVINCE_NAME), ]
 
