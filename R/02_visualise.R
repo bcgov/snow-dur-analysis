@@ -17,12 +17,12 @@ library(Cairo) # graphics device
 
 ## plotting
 ## bubble plot
-bbl_plot <- ggplot() +
-  geom_sf(data = df_bbl, aes(size = value), shape = 1, show.legend = "point") +
-  facet_wrap("variable") +
-  theme_void() +
-  theme(panel.grid = element_line(colour = "transparent"))
-bbl_plot
+# bbl_plot <- ggplot() +
+#   geom_sf(data = df_bbl, aes(size = value), shape = 1, show.legend = "point") +
+#   facet_wrap("variable") +
+#   theme_void() +
+#   theme(panel.grid = element_line(colour = "transparent"))
+# bbl_plot
 
 ## Snow Cover Index (SCI) by ecoprovince
 prov_plot <- ggplot() +
@@ -35,7 +35,7 @@ prov_plot
 
 ## Oceanic Nino Index (ONI) correlation plot
 oni_plot <- ggplot() +
-  geom_sf(data = df_oni, aes(fill = COR), lwd = 0.4) +
+  geom_sf(data = df_oni, aes(fill = cor), lwd = 0.4) +
   scale_fill_viridis_c(name = "Correlation") +
   facet_wrap(c("season", "measurements")) +
   theme_void() +
@@ -58,9 +58,9 @@ cal_plot
 
 
 ## saving plots
-CairoPNG("../plots/bubble_map.png", 1200, 800)
-bbl_plot
-dev.off()
+# CairoPNG("../plots/bubble_map.png", 1200, 800)
+# bbl_plot
+# dev.off()
 CairoPNG("../plots/ecoprov_map.png", 1200, 600)
 prov_plot
 dev.off()
