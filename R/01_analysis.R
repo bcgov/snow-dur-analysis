@@ -81,20 +81,30 @@ df_oni_long <- merge(df_oni_long, dfo)
 df_oni_long <- melt(df_oni_long, id.vars = c("year", "ECOPROVINCE_NAME", "measurements", "value"),
                     variable.name = "month", value.name = "ONI")
 
-## Pearson correlation test by each ecoprovince
+## extracting hydrological season data from original dataframe
+df_oni_long$season <- NA
+df_oni_long[df_oni_long$month == "Dec" | df_oni_long$month == "Jan" | df_oni_long$month == "Feb", "season"] <- "Winter"
+df_oni_long[df_oni_long$month == "Mar" | df_oni_long$month == "Apr" | df_oni_long$month == "May", "season"] <- "Spring"
+df_oni_long[df_oni_long$month == "Jun" | df_oni_long$month == "Jul" | df_oni_long$month == "Aug", "season"] <- "Summer"
+df_oni_long[df_oni_long$month == "Sep" | df_oni_long$month == "Oct" | df_oni_long$month == "Nov", "season"] <- "Fall"
+
+## Pearson correlation test by each ecoprovince,
 df_oni <- df_oni_long %>%
-  ddply(.(ECOPROVINCE_NAME, measurements, month), summarise,
+  ddply(.(ECOPROVINCE_NAME, measurements, month), mutate,
+        "cor" = cor.test(value, ONI, method = "pearson")$estimate,
+        "p_value" = cor.test(value, ONI, method = "pearson")$p.value) %>%
+  ddply(.(ECOPROVINCE_NAME, measurements, season), mutate,
+        "cor_seasonal" = cor.test(value, ONI, method = "pearson")$estimate,
+        "p_value_seasonal" = cor.test(value, ONI, method = "pearson")$p.value)
+
+## keeping only unique correlation records
+df_oni <- subset(df_oni, !duplicated(df_oni$cor))
+
+## seasonal ONI and snow measurement correlation, adding to original dataframe
+df_oni_long <- df_oni_long %>%
+  ddply(.(ECOPROVINCE_NAME, measurements, season), mutate,
         "cor" = cor.test(value, ONI, method = "pearson")$estimate,
         "p_value" = cor.test(value, ONI, method = "pearson")$p.value)
-
-## extracting hydrological season data from original dataframe
-# dfo$season <- NA
-# dfo[dfo$ONI == "DJF", "season"] <- "Winter"
-# dfo[dfo$ONI == "MAM", "season"] <- "Spring"
-# dfo[dfo$ONI == "JJA", "season"] <- "Summer"
-# dfo[dfo$ONI == "SON", "season"] <- "Fall"
-#
-# df_oni <- dfo[!is.na(dfo$season), ]
 
 
 ## geospatial processing
@@ -110,7 +120,7 @@ ecoprov <- ms_simplify(ecoprov, keep = 0.02, keep_shapes = TRUE)
 df_prov <- df_full %>%
   select(c(ECOPROVINCE_NAME, grep("SCI_20", colnames(df_full)))) %>%
   gather(key = variable, value = value, -ECOPROVINCE_NAME) %>%
-  group_by(ECOPROVINCE_NAME, variable, add = TRUE) %>%
+  group_by(ECOPROVINCE_NAME, variable) %>%
   dplyr::summarise(SCI_avg = mean(value, na.rm = TRUE))
 
 df_prov <- df_prov[!is.na(df_prov$ECOPROVINCE_NAME), ]
