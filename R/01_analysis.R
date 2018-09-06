@@ -10,12 +10,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
-
-library(dplyr) # data analysis
-library(tidyr) # gather function
 library(plyr) # ddply function for correlation test
-library(stringr) # split columns
-library(purrr) # extracting single elements from dataframe
+library(tidyverse) # data analysis and viz
 library(reshape2) # melt function
 library(rmapshaper) # simplify shapefiles for viz
 library(bcmaps)
@@ -133,4 +129,3 @@ df_prov <- left_join(ecoprov, df_prov, by = "ECOPROVINCE_NAME")
 
 ## for ONI
 df_oni <- left_join(ecoprov, df_oni, by = "ECOPROVINCE_NAME")
-

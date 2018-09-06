@@ -11,7 +11,6 @@
 # See the License for the specific language governing permissions and limitations under the License.
 
 
-library(ggplot2)
 library(rcartocolor) # palette
 library(Cairo) # graphics device
 
@@ -47,7 +46,7 @@ cal_plot <- ggplot(df_cal_long, aes(day, year, fill = n)) +
   geom_tile(colour = "grey", width = 0.8) +
   labs(x = "", y = "") +
   scale_fill_viridis_c(name = "Number\nof Sites") +
-  scale_x_discrete(breaks = c("2018-03-12", "2018-06-15", "2018-09-17", "2018-12-14"),
+  scale_x_discrete(breaks = c("2018-03-12", "2018-06-12", "2018-09-02", "2018-12-14"),
                    labels = c("Mar", "Jun", "Sep", "Dec")) +
   # scale_x_date(date_labels = "%b %d") +
   facet_grid(variable ~ .) +
@@ -56,6 +55,14 @@ cal_plot <- ggplot(df_cal_long, aes(day, year, fill = n)) +
         strip.text = element_text(colour = "black"), axis.ticks = element_blank())
 cal_plot
 
+## SCI against elevation
+elev_plot <- ggplot(df_full, aes(SCI_mean, z)) +
+  geom_hex() +
+  labs(x = "Average SCI", y = "Elevation") +
+  scale_fill_viridis_c() +
+  theme_light() +
+  theme(panel.grid = element_blank(), axis.ticks = element_blank())
+elev_plot
 
 ## saving plots
 # CairoPNG("../plots/bubble_map.png", 1200, 800)
