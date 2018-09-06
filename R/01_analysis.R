@@ -26,6 +26,9 @@ library(sf) # geospatial data processing
 ## COR_**** Correlation with tested variables; p_Season_Time: p-value
 df_full <- read.csv("../data/export_df.csv")
 
+## removing NA Ecoprovince names
+df_full <- df_full[complete.cases(df_full$ECOPROVINCE_NAME), ]
+
 ## reading in Oceanic Nino Index (ONI) data from 2002-2018 from
 ## http://origin.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php
 ## column names indicate averaged results for three months
