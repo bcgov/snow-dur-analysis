@@ -94,7 +94,9 @@ df_oni <- df_oni_long %>%
         "p_value" = cor.test(value, ONI, method = "pearson")$p.value) %>%
   ddply(.(ECOPROVINCE_NAME, measurements, season), mutate,
         "cor_seasonal" = cor.test(value, ONI, method = "pearson")$estimate,
-        "p_value_seasonal" = cor.test(value, ONI, method = "pearson")$p.value)
+        "p_value_seasonal" = cor.test(value, ONI, method = "pearson")$p.value) %>%
+  group_by(ECOPROVINCE_NAME, season, measurements) %>%
+  mutate(cor_min = min(cor), cor_max = max(cor))
 
 ## keeping only unique correlation records
 df_oni <- subset(df_oni, !duplicated(df_oni$cor))

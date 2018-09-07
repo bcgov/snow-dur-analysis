@@ -11,7 +11,6 @@
 # See the License for the specific language governing permissions and limitations under the License.
 
 
-library(ggplot2)
 library(rcartocolor) # palette
 library(Cairo) # graphics device
 
@@ -67,6 +66,25 @@ elev_plot <- ggplot(df_full, aes(SCI_mean, z)) +
         strip.text = element_text(colour = "black"), axis.ticks = element_blank())
 elev_plot
 
+ggplot(df_full, aes(SCI_mean, TC2000)) +
+  geom_hex() +
+  scale_fill_viridis_c() +
+  facet_wrap("ECOPROVINCE_NAME")
+
+## seasonal ONI correlation with measurements static plot
+oni_cor <- df_oni %>%
+  filter(measurements == "SCI") %>%
+  ggplot(mapping = aes(ECOPROVINCE_NAME, cor_seasonal, fill = p_value_seasonal)) +
+  geom_errorbar(aes(ymin = cor_min, ymax = cor_max), width = 0.4) +
+  geom_point(size = 5, shape = 21, alpha = 0.5) +
+  scale_fill_viridis_c(direction = -1, name = "p-value") +
+  labs(x = "", y = "Correlation") +
+  coord_flip() +
+  facet_wrap("season") +
+  theme_light() +
+  theme(panel.grid = element_blank(), strip.background = element_rect(fill = "transparent", colour = "grey"),
+        strip.text = element_text(colour = "black"), axis.ticks = element_blank())
+plot(oni_cor)
 
 ## saving plots
 # CairoPNG("../plots/bubble_map.png", 1200, 800)
