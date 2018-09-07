@@ -99,13 +99,6 @@ df_oni <- df_oni_long %>%
 ## keeping only unique correlation records
 df_oni <- subset(df_oni, !duplicated(df_oni$cor))
 
-## seasonal ONI and snow measurement correlation, adding to original dataframe
-df_oni_long <- df_oni_long %>%
-  ddply(.(ECOPROVINCE_NAME, measurements, season), mutate,
-        "cor" = cor.test(value, ONI, method = "pearson")$estimate,
-        "p_value" = cor.test(value, ONI, method = "pearson")$p.value)
-
-
 ## geospatial processing
 ## converting csv to sf
 # df_bbl <- st_as_sf(df_bbl, coords = c("lon", "lat"))
