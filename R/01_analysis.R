@@ -123,4 +123,4 @@ df_prov <- df_prov[!is.na(df_prov$ECOPROVINCE_NAME), ]
 df_prov <- left_join(ecoprov, df_prov, by = "ECOPROVINCE_NAME")
 
 ## for ONI
-df_oni <- left_join(ecoprov, df_oni, by = "ECOPROVINCE_NAME")
+df_oni_prov <- left_join(ecoprov, df_oni, by = "ECOPROVINCE_NAME")
