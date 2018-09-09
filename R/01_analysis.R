@@ -124,3 +124,14 @@ df_prov <- left_join(ecoprov, df_prov, by = "ECOPROVINCE_NAME")
 
 ## for ONI
 df_oni_prov <- left_join(ecoprov, df_oni, by = "ECOPROVINCE_NAME")
+
+## dot map showing average snow
+df_dots <- select(df_prov, SCI_avg, SHAPE)
+
+## creating equal interval grids to combine with spatial dataframe
+df_grid <- st_make_grid(df_dots, n= 100)
+
+## interpolating and returning centroid for each grid cell
+df_dots_map <- df_dots %>%
+  st_interpolate_aw(to = df_grid, extensive = TRUE) %>%
+  st_centroid()

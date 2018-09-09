@@ -14,7 +14,7 @@
 library(rcartocolor) # palette
 library(Cairo) # graphics device
 
-## plotting
+## map viz
 ## bubble plot
 # bbl_plot <- ggplot() +
 #   geom_sf(data = df_bbl, aes(size = value), shape = 1, show.legend = "point") +
@@ -41,6 +41,15 @@ oni_plot <- ggplot() +
   theme(panel.grid = element_line(colour = "transparent"))
 oni_plot
 
+## dot plot showing average snow amount, equal unit
+ggplot(df_dots_map) +
+  geom_sf(aes(size = SCI_avg), show.legend = "point") +
+  scale_size_area(name = "Average SCI") +
+  theme_void() +
+  theme(panel.grid = element_line(colour = "transparent"))
+
+
+## static plots
 ## calendar plot for snow start and end dates
 cal_plot <- ggplot(df_cal_long, aes(day, year, fill = n)) +
   geom_tile(colour = "grey", width = 0.8) +
@@ -66,7 +75,7 @@ elev_plot <- ggplot(df_full, aes(SCI_mean, z)) +
         strip.text = element_text(colour = "black"), axis.ticks = element_blank())
 elev_plot
 
-## seasonal ONI correlation with measurements static plot
+## seasonal ONI correlation with measurements
 oni_cor <- df_oni %>%
   filter(measurements == "SCI") %>%
   ggplot(mapping = aes(ECOPROVINCE_NAME, cor_seasonal, fill = p_value_seasonal)) +
@@ -80,6 +89,7 @@ oni_cor <- df_oni %>%
   theme(panel.grid = element_blank(), strip.background = element_rect(fill = "transparent", colour = "grey"),
         strip.text = element_text(colour = "black"), axis.ticks = element_blank())
 plot(oni_cor)
+
 
 ## saving plots
 # CairoPNG("../plots/bubble_map.png", 1200, 800)
