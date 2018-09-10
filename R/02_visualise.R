@@ -12,6 +12,7 @@
 
 
 library(rcartocolor) # palette
+library(RColorBrewer)
 library(Cairo) # graphics device
 
 ## map viz
@@ -23,10 +24,12 @@ library(Cairo) # graphics device
 #   theme(panel.grid = element_line(colour = "transparent"))
 # bbl_plot
 
+pal <- brewer.pal(9, "Blues")
+
 ## Snow Cover Index (SCI) by ecoprovince
 prov_plot <- ggplot() +
   geom_sf(data = df_prov, aes(fill = SCI_avg), lwd = 0.4) +
-  scale_fill_carto_c(palette = "ArmyRose") +
+  scale_fill_gradientn(colours = pal) +
   facet_wrap(facets = vars(variable)) +
   theme_void() +
   theme(panel.grid = element_line(colour = "transparent"))
