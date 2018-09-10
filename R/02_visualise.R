@@ -42,12 +42,12 @@ oni_plot <- ggplot() +
 oni_plot
 
 ## dot plot showing average snow amount, equal unit
-ggplot(df_dots_map) +
+dot_plot <- ggplot(df_dots_map) +
   geom_sf(aes(size = SCI_avg), show.legend = "point") +
   scale_size_area(name = "Average SCI") +
   theme_void() +
   theme(panel.grid = element_line(colour = "transparent"))
-
+dot_plot
 
 ## static plots
 ## calendar plot for snow start and end dates
@@ -76,7 +76,7 @@ elev_plot <- ggplot(df_full, aes(SCI_mean, z)) +
 elev_plot
 
 ## seasonal ONI correlation with measurements
-oni_cor <- df_oni %>%
+oni_cor_plot <- df_oni %>%
   filter(measurements == "SCI") %>%
   ggplot(mapping = aes(ECOPROVINCE_NAME, cor_seasonal, fill = p_value_seasonal)) +
   geom_errorbar(aes(ymin = cor_min, ymax = cor_max), width = 0.5) +
@@ -88,7 +88,7 @@ oni_cor <- df_oni %>%
   theme_light() +
   theme(panel.grid = element_blank(), strip.background = element_rect(fill = "transparent", colour = "grey"),
         strip.text = element_text(colour = "black"), axis.ticks = element_blank())
-plot(oni_cor)
+oni_cor_plot
 
 
 ## saving plots

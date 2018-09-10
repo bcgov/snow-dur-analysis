@@ -20,7 +20,7 @@ library(sf) # geospatial data processing
 ## importing cleaned data
 ## SCI - Snow Cover Index; INTe, INTs, INT: end/start/interval (since Sept 1) of snow season;
 ## COR_**** Correlation with tested variables; p_Season_Time: p-value
-df_full <- read.csv("../data/export_df.csv")
+df_full <- read.csv("../data/snow/export_df.csv")
 
 ## removing NA Ecoprovince names
 df_full <- df_full[complete.cases(df_full$ECOPROVINCE_NAME), ]
@@ -28,7 +28,7 @@ df_full <- df_full[complete.cases(df_full$ECOPROVINCE_NAME), ]
 ## reading in Oceanic Nino Index (ONI) data from 2002-2018 from
 ## http://origin.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php
 ## column names indicate averaged results for three months
-dfo <- read.csv("../data/original_ONI.csv")
+dfo <- read.csv("../data/snow/original_ONI.csv")
 
 ## df_full analysis ####
 ## correlation with ONI by point
@@ -129,9 +129,9 @@ df_oni_prov <- left_join(ecoprov, df_oni, by = "ECOPROVINCE_NAME")
 df_dots <- select(df_prov, SCI_avg, SHAPE)
 
 ## creating equal interval grids to combine with spatial dataframe
-df_grid <- st_make_grid(df_dots, n= 100)
+df_grid <- st_make_grid(df_dots, n= 50)
 
 ## interpolating and returning centroid for each grid cell
 df_dots_map <- df_dots %>%
-  st_interpolate_aw(to = df_grid, extensive = TRUE) %>%
+  st_interpolate_aw(to = df_grid, extensive = FALSE) %>%
   st_centroid()
