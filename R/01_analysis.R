@@ -126,7 +126,13 @@ df_prov <- left_join(ecoprov, df_prov, by = "ECOPROVINCE_NAME")
 df_oni_prov <- left_join(ecoprov, df_oni, by = "ECOPROVINCE_NAME")
 
 ## dot map showing average snow
-df_dots <- select(df_prov, SCI_avg, SHAPE)
+df_dots <- df_prov %>%
+  select(SCI_avg, ECOPROVINCE_NAME, SHAPE) %>%
+  group_by(ECOPROVINCE_NAME) %>%
+  mutate(SCI_avg_eco = mean(SCI_avg, na.rm = TRUE))
+
+df_dots$SCI_avg <- NULL
+df_dots$ECOPROVINCE_NAME <- NULL
 
 ## creating equal interval grids to combine with spatial dataframe
 df_grid <- st_make_grid(df_dots, n= 50)
