@@ -101,6 +101,13 @@ df_oni <- df_oni_long %>%
 ## keeping only unique correlation records
 df_oni <- subset(df_oni, !duplicated(df_oni$cor))
 
+## dot map showing sum of snow cover index
+df_dots <- df_full %>%
+  select(c(ECOPROVINCE_NAME, grep("SCI_20", colnames(df_full)))) %>%
+  gather(key = variable, value = value, -ECOPROVINCE_NAME) %>%
+  group_by(ECOPROVINCE_NAME, variable) %>%
+  dplyr::summarise(SCI_sum = sum(value, na.rm = TRUE))
+
 ## geospatial processing
 ## converting csv to sf
 # df_bbl <- st_as_sf(df_bbl, coords = c("lon", "lat"))
@@ -117,22 +124,14 @@ df_prov <- df_full %>%
   group_by(ECOPROVINCE_NAME, variable) %>%
   dplyr::summarise(SCI_avg = mean(value, na.rm = TRUE))
 
-df_prov <- df_prov[!is.na(df_prov$ECOPROVINCE_NAME), ]
-
 ## joining spatial and tabular dataframes
 df_prov <- left_join(ecoprov, df_prov, by = "ECOPROVINCE_NAME")
 
+df_dots <- left_join(ecoprov, df_dots, by = "ECOPROVINCE_NAME")
+df_dots <- select(df_dots, SCI_sum, SHAPE)
+
 ## for ONI
 df_oni_prov <- left_join(ecoprov, df_oni, by = "ECOPROVINCE_NAME")
-
-## dot map showing average snow
-df_dots <- df_prov %>%
-  select(SCI_avg, ECOPROVINCE_NAME, SHAPE) %>%
-  group_by(ECOPROVINCE_NAME) %>%
-  mutate(SCI_avg_eco = mean(SCI_avg, na.rm = TRUE))
-
-df_dots$SCI_avg <- NULL
-df_dots$ECOPROVINCE_NAME <- NULL
 
 ## creating equal interval grids to combine with spatial dataframe
 df_grid <- st_make_grid(df_dots, n= 50)

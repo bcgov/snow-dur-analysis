@@ -46,8 +46,8 @@ oni_plot
 
 ## dot plot showing average snow amount, equal unit
 dot_plot <- ggplot(df_dots_map) +
-  geom_sf(aes(size = SCI_avg_eco), show.legend = "point") +
-  scale_size_area(name = "Average SCI") +
+  geom_sf(aes(size = SCI_sum), show.legend = "point") +
+  scale_size_area(name = "SCI sum") +
   theme_void() +
   theme(panel.grid = element_line(colour = "transparent"))
 dot_plot
@@ -67,7 +67,7 @@ cal_plot <- ggplot(df_cal_long, aes(day, year, fill = n)) +
         strip.text = element_text(colour = "black"), axis.ticks = element_blank())
 cal_plot
 
-## SCI against elevation
+## SCI against elevation, using mean SCI and elevation per observation point data
 elev_plot <- ggplot(df_full, aes(SCI_mean, z)) +
   geom_hex() +
   labs(x = "Average SCI", y = "Elevation") +
