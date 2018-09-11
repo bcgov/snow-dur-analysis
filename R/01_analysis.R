@@ -134,6 +134,7 @@ df_dots <- select(df_dots, SCI_sum, SHAPE)
 df_oni_prov <- left_join(ecoprov, df_oni, by = "ECOPROVINCE_NAME")
 
 ## creating equal interval grids to combine with spatial dataframe
+## dictates the density of dots, does not change grouped values
 df_grid <- st_make_grid(df_dots, n= 50)
 
 ## interpolating and returning centroid for each grid cell
