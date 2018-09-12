@@ -46,7 +46,7 @@ oni_plot
 
 ## dot plot showing average snow amount, equal unit
 dot_plot <- ggplot(df_dots_map) +
-  geom_sf(aes(size = SCI_sum), show.legend = "point") +
+  geom_sf(aes(size = SCI_sum), show.legend = "point", colour = "#4292c6") +
   scale_size_area(name = "SCI sum") +
   theme_void() +
   theme(panel.grid = element_line(colour = "transparent"))
