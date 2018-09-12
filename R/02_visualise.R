@@ -29,7 +29,7 @@ pal <- brewer.pal(9, "Blues")
 ## Snow Cover Index (SCI) by ecoprovince
 prov_plot <- ggplot() +
   geom_sf(data = df_prov, aes(fill = SCI_avg), lwd = 0.4) +
-  scale_fill_gradientn(colours = pal) +
+  scale_fill_gradientn(colours = pal, name = "Average SCI") +
   facet_wrap(facets = vars(variable)) +
   theme_void() +
   theme(panel.grid = element_line(colour = "transparent"))
@@ -67,6 +67,19 @@ cal_plot <- ggplot(df_cal_long, aes(day, year, fill = n)) +
         strip.text = element_text(colour = "black"), axis.ticks = element_blank())
 cal_plot
 
+## boxplot of SCI averaged by pixel, coloured by SCI averaged by ecoprovince
+SCI_plot <- df_full %>%
+  select(ECOPROVINCE_CODE, SCI_mean) %>%
+  group_by(ECOPROVINCE_CODE) %>%
+  mutate(SCI_eco = mean(SCI_mean, na.rm = TRUE)) %>%
+  ggplot(aes(ECOPROVINCE_CODE, SCI_mean, fill = SCI_eco)) +
+    geom_boxplot() +
+    scale_fill_gradientn(colours = pal, name = "SCI by\nEcoprovince") +
+    labs(x = "", y = "SCI averaged by pixel") +
+    theme_light() +
+    theme(panel.grid = element_blank(), axis.ticks = element_blank())
+SCI_plot
+
 ## SCI against elevation, using mean SCI and elevation per observation point data
 elev_plot <- ggplot(df_full, aes(SCI_mean, z)) +
   geom_hex() +
@@ -78,7 +91,7 @@ elev_plot <- ggplot(df_full, aes(SCI_mean, z)) +
         strip.text = element_text(colour = "black"), axis.ticks = element_blank())
 elev_plot
 
-## seasonal ONI correlation with measurements
+## seasonal ONI correlation with SCI
 oni_cor_plot <- df_oni %>%
   filter(measurements == "SCI") %>%
   ggplot(mapping = aes(ECOPROVINCE_NAME, cor_seasonal, fill = p_value_seasonal)) +

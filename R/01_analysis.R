@@ -109,12 +109,6 @@ df_dots <- df_full %>%
   dplyr::summarise(SCI_sum = sum(value, na.rm = TRUE))
 
 
-
-# ecosec <- st_intersection(ecosections(), bc_bound())
-# ecosec <- ms_simplify(ecosec, keep = 0.02, keep_shapes = TRUE)
-# df_dots <- left_join(ecosec, df_dots, by = "ECOSECTION_NAME")
-# df_dots <- select(df_dots, SCI_sum, SHAPE)
-
 ## geospatial processing
 ## converting csv to sf
 # df_bbl <- st_as_sf(df_bbl, coords = c("lon", "lat"))
