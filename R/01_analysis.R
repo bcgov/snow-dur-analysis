@@ -103,10 +103,17 @@ df_oni <- subset(df_oni, !duplicated(df_oni$cor))
 
 ## dot map showing sum of snow cover index
 df_dots <- df_full %>%
-  select(c(ECOPROVINCE_NAME, grep("SCI_20", colnames(df_full)))) %>%
-  gather(key = variable, value = value, -ECOPROVINCE_NAME) %>%
-  group_by(ECOPROVINCE_NAME, variable) %>%
+  select(c(ECOSECTION_NAME, grep("SCI_20", colnames(df_full)))) %>%
+  gather(key = variable, value = value, -ECOSECTION_NAME) %>%
+  group_by(ECOSECTION_NAME, variable) %>%
   dplyr::summarise(SCI_sum = sum(value, na.rm = TRUE))
+
+
+
+# ecosec <- st_intersection(ecosections(), bc_bound())
+# ecosec <- ms_simplify(ecosec, keep = 0.02, keep_shapes = TRUE)
+# df_dots <- left_join(ecosec, df_dots, by = "ECOSECTION_NAME")
+# df_dots <- select(df_dots, SCI_sum, SHAPE)
 
 ## geospatial processing
 ## converting csv to sf
@@ -116,6 +123,8 @@ df_dots <- df_full %>%
 ## preparing for map viz
 ecoprov <- st_intersection(ecoprovinces(), bc_bound())
 ecoprov <- ms_simplify(ecoprov, keep = 0.02, keep_shapes = TRUE)
+ecosec <- st_intersection(ecosections(), bc_bound())
+ecosec <- ms_simplify(ecosec, keep = 0.02, keep_shapes = TRUE)
 
 ## extracting relevant columns and calculating average snow cover index for each ecoprovinces
 df_prov <- df_full %>%
@@ -127,8 +136,10 @@ df_prov <- df_full %>%
 ## joining spatial and tabular dataframes
 df_prov <- left_join(ecoprov, df_prov, by = "ECOPROVINCE_NAME")
 
-df_dots <- left_join(ecoprov, df_dots, by = "ECOPROVINCE_NAME")
-df_dots <- select(df_dots, SCI_sum, SHAPE)
+df_dots <- left_join(ecosec, df_dots, by = "ECOSECTION_NAME")
+df_dots <- df_dots %>%
+  select(SCI_sum, SHAPE) %>%
+  st_buffer(0) # multipolygon
 
 ## for ONI
 df_oni_prov <- left_join(ecoprov, df_oni, by = "ECOPROVINCE_NAME")
@@ -141,3 +152,4 @@ df_grid <- st_make_grid(df_dots, n= 50)
 df_dots_map <- df_dots %>%
   st_interpolate_aw(to = df_grid, extensive = FALSE) %>%
   st_centroid()
+
