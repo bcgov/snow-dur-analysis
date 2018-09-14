@@ -41,7 +41,7 @@ df_cal_long <- df_cal %>%
   gather(key = variable, value = doy, -ID) %>%
   mutate(year = as.character(substr(variable, 6, 10)),
          variable = substr(variable, 1,4),
-         date = as.Date(doy, origin = paste0(year, '-09-01')),
+         date = as.Date(doy, origin = paste0(year, '-09-13')),
          day = substr(date, 6, 10)) %>%
   add_count(date) ## count distinguishes year+month+day
 
