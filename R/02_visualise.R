@@ -58,8 +58,8 @@ cal_plot <- ggplot(df_cal_long, aes(day, year, fill = n)) +
   geom_tile(colour = "grey", width = 0.8) +
   labs(x = "", y = "") +
   scale_fill_viridis_c(name = "Number\nof Sites") +
-  scale_x_discrete(breaks = c("2018-03-12", "2018-06-15", "2018-09-17", "2018-12-14"),
-                   labels = c("Mar", "Jun", "Sep", "Dec")) +
+  scale_x_discrete(breaks = c("2018-01-07", "2018-03-12", "2018-06-15", "2018-09-17", "2018-12-30"),
+                   labels = c("Jan", "Mar", "Jun", "Sep", "Dec")) +
   # scale_x_date(date_labels = "%b %d") +
   facet_grid(variable ~ .) +
   theme_light() +

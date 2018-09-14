@@ -42,7 +42,8 @@ df_cal_long <- df_cal %>%
   mutate(year = as.character(substr(variable, 6, 10)),
          variable = substr(variable, 1,4),
          date = as.Date(doy, origin = paste0(year, '-09-13')),
-         day = substr(date, 6, 10)) %>%
+         day = substr(date, 6, 10),
+         year = substr(date, 1, 4)) %>% # outputting correct year after setting origin date
   add_count(date) ## count distinguishes year+month+day
 
 df_cal_long$variable <- factor(df_cal_long$variable, levels = c("INTs", "INTe"), labels = c("Start Date", "End Date"))
