@@ -91,20 +91,25 @@ elev_plot <- ggplot(df_full, aes(SCI_mean, z)) +
         strip.text = element_text(colour = "black"), axis.ticks = element_blank())
 elev_plot
 
-## seasonal ONI correlation with SCI
-oni_cor_plot <- df_oni %>%
-  filter(measurements == "SCI") %>%
-  ggplot(mapping = aes(ECOPROVINCE_NAME, cor_seasonal, fill = p_value_seasonal)) +
-  geom_errorbar(aes(ymin = cor_min, ymax = cor_max), width = 0.5) +
-  geom_point(size = 5, shape = 21, alpha = 0.5) +
-  scale_fill_viridis_c(direction = -1, name = "p-value") +
-  labs(x = "", y = "Correlation") +
-  coord_flip() +
-  facet_wrap("season") +
-  theme_light() +
-  theme(panel.grid = element_blank(), strip.background = element_rect(fill = "transparent", colour = "grey"),
-        strip.text = element_text(colour = "black"), axis.ticks = element_blank())
-oni_cor_plot
+## looping over seasonal ONI correlation with different snow measurements plot
+for (i in 1:length(unique(df_oni$measurements))) {
+
+  oni_cor_plot <- df_oni %>%
+    filter(measurements == unique(df_oni$measurements)[i]) %>%
+    ggplot(mapping = aes(ECOPROVINCE_NAME, cor_seasonal, fill = p_value_seasonal)) +
+    geom_errorbar(aes(ymin = cor_min, ymax = cor_max), width = 0.4) +
+    geom_point(size = 4, shape = 21, alpha = 0.5) +
+    scale_fill_viridis_c(direction = -1, name = "p-value") +
+    labs(x = "", y = paste("ONI Correlation with", unique(df_oni$measurements)[i])) +
+    coord_flip() +
+    facet_wrap("season") +
+    theme_light() +
+    theme(panel.grid = element_blank(), strip.background = element_rect(fill = "transparent", colour = "grey"),
+          strip.text = element_text(colour = "black"), axis.ticks = element_blank())
+
+  ggsave(paste("../data/snow/ONI_cor_", unique(df_oni$measurements)[i], ".png"), oni_cor_plot,
+         width = 10, height = 7)
+}
 
 
 ## saving plots

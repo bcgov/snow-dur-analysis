@@ -87,7 +87,7 @@ df_oni_long[df_oni_long$month == "Mar" | df_oni_long$month == "Apr" | df_oni_lon
 df_oni_long[df_oni_long$month == "Jun" | df_oni_long$month == "Jul" | df_oni_long$month == "Aug", "season"] <- "Summer"
 df_oni_long[df_oni_long$month == "Sep" | df_oni_long$month == "Oct" | df_oni_long$month == "Nov", "season"] <- "Fall"
 
-## Pearson correlation test by each ecoprovince,
+## Pearson correlation test by each ecoprovince
 df_oni <- df_oni_long %>%
   ddply(.(ECOPROVINCE_NAME, measurements, month), mutate,
         "cor" = cor.test(value, ONI, method = "pearson")$estimate,
