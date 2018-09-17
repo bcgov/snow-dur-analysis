@@ -90,7 +90,7 @@ SCI_plot
 ## SCI against elevation, using mean SCI and elevation per observation point data
 elev_plot <- ggplot(df_full, aes(SCI_mean, z)) +
   geom_hex() +
-  labs(title = "Correlation with SCI and Elevation by Ecoprovince", x = "Average SCI", y = "Elevation") +
+  labs(title = "Correlation between SCI and Elevation by Ecoprovince", x = "Average SCI", y = "Elevation") +
   scale_fill_viridis_c() +
   facet_wrap("ECOPROVINCE_NAME") +
   theme_light() +
