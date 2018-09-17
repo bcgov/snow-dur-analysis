@@ -13,7 +13,6 @@
 
 library(rcartocolor) # palette
 library(RColorBrewer)
-library(Cairo) # graphics device
 
 ## map viz
 ## bubble plot
@@ -29,34 +28,40 @@ pal <- brewer.pal(9, "Blues")
 ## Snow Cover Index (SCI) by ecoprovince
 prov_plot <- ggplot() +
   geom_sf(data = df_prov, aes(fill = SCI_avg), lwd = 0.4) +
+  labs(title = "Annual Mean Snow Cover Index (SCI) by Ecoprovince") +
   scale_fill_gradientn(colours = pal, name = "Average SCI") +
   facet_wrap(facets = vars(variable)) +
   theme_void() +
-  theme(panel.grid = element_line(colour = "transparent"))
+  theme(panel.grid = element_line(colour = "transparent"), text = element_text(size = 14),
+        plot.title = element_text(size = 24, hjust = 0.5, margin=margin(10,0,15,0)))
 prov_plot
 
 ## Oceanic Nino Index (ONI) correlation plot
 oni_plot <- ggplot() +
   geom_sf(data = df_oni_prov, aes(fill = cor), lwd = 0.4) +
+  labs(title = "Oceanic Nino Index (ONI) Correlation with Snow Measurements") +
   scale_fill_viridis_c(name = "Correlation") +
   facet_wrap(c("season", "measurements")) +
   theme_void() +
-  theme(panel.grid = element_line(colour = "transparent"))
+  theme(panel.grid = element_line(colour = "transparent"), text = element_text(size = 16),
+        plot.title = element_text(size = 24, hjust = 0.5, margin=margin(10,0,15,0)))
 oni_plot
 
-## dot plot showing average snow amount, equal unit
+## dot plot showing average snow amount each ecosection, equal unit
 dot_plot <- ggplot(df_dots_map) +
   geom_sf(aes(size = SCI_sum), show.legend = "point", colour = "#4292c6") +
+  labs(title = "Interpolated Sum of SCI by Ecosections (2002-2017)") +
   scale_size_area(name = "SCI sum") +
   theme_void() +
-  theme(panel.grid = element_line(colour = "transparent"))
+  theme(panel.grid = element_line(colour = "transparent"), text = element_text(size = 14),
+        plot.title = element_text(size = 24, hjust = 0.5, margin=margin(10,0,0,0)))
 dot_plot
 
 ## static plots
 ## calendar plot for snow start and end dates
 cal_plot <- ggplot(df_cal_long, aes(day, year, fill = n)) +
   geom_tile(colour = "grey", width = 0.8) +
-  labs(x = "", y = "") +
+  labs(title = "Snow Start and End Date by Year", x = "", y = "") +
   scale_fill_viridis_c(name = "Number\nof Sites") +
   scale_x_discrete(breaks = c("2018-01-07", "2018-03-12", "2018-06-15", "2018-09-17", "2018-12-30"),
                    labels = c("Jan", "Mar", "Jun", "Sep", "Dec")) +
@@ -64,7 +69,8 @@ cal_plot <- ggplot(df_cal_long, aes(day, year, fill = n)) +
   facet_grid(variable ~ .) +
   theme_light() +
   theme(panel.grid = element_blank(), strip.background = element_rect(fill = "transparent", colour = "grey"),
-        strip.text = element_text(colour = "black"), axis.ticks = element_blank())
+        strip.text = element_text(colour = "black"), axis.ticks = element_blank(), text = element_text(size = 14),
+        plot.title = element_text(size = 24, hjust = 0.5, margin=margin(10,0,15,0)))
 cal_plot
 
 ## boxplot of SCI averaged by pixel, coloured by SCI averaged by ecoprovince
@@ -74,21 +80,23 @@ SCI_plot <- df_full %>%
   mutate(SCI_eco = mean(SCI_mean, na.rm = TRUE)) %>%
   ggplot(aes(ECOPROVINCE_CODE, SCI_mean, fill = SCI_eco)) +
     geom_boxplot() +
+    labs(title = "Mean SCI per Pixel among Ecoprovinces (2002-2017)", x = "", y = "SCI averaged by pixel") +
     scale_fill_gradientn(colours = pal, name = "SCI by\nEcoprovince") +
-    labs(x = "", y = "SCI averaged by pixel") +
     theme_light() +
-    theme(panel.grid = element_blank(), axis.ticks = element_blank())
+    theme(panel.grid = element_blank(), axis.ticks = element_blank(), text = element_text(size = 14),
+          plot.title = element_text(size = 24, hjust = 0.5, margin=margin(10,0,15,0)))
 SCI_plot
 
 ## SCI against elevation, using mean SCI and elevation per observation point data
 elev_plot <- ggplot(df_full, aes(SCI_mean, z)) +
   geom_hex() +
-  labs(x = "Average SCI", y = "Elevation") +
+  labs(title = "Correlation with SCI and Elevation by Ecoprovince", x = "Average SCI", y = "Elevation") +
   scale_fill_viridis_c() +
   facet_wrap("ECOPROVINCE_NAME") +
   theme_light() +
   theme(panel.grid = element_blank(), strip.background = element_rect(fill = "transparent", colour = "grey"),
-        strip.text = element_text(colour = "black"), axis.ticks = element_blank())
+        strip.text = element_text(colour = "black"), axis.ticks = element_blank(), text = element_text(size = 14),
+        plot.title = element_text(size = 24, hjust = 0.5, margin=margin(10,0,15,0)))
 elev_plot
 
 ## looping over seasonal ONI correlation with different snow measurements plot
@@ -107,7 +115,7 @@ for (i in 1:length(unique(df_oni$measurements))) {
     theme(panel.grid = element_blank(), strip.background = element_rect(fill = "transparent", colour = "grey"),
           strip.text = element_text(colour = "black"), axis.ticks = element_blank())
 
-  ggsave(paste("../data/snow/ONI_cor_", unique(df_oni$measurements)[i], ".png"), oni_cor_plot,
+  ggsave(paste("../snow_docs/plots/ONI_cor_", unique(df_oni$measurements)[i], ".png"), oni_cor_plot,
          width = 10, height = 7)
 }
 
@@ -116,12 +124,21 @@ for (i in 1:length(unique(df_oni$measurements))) {
 # CairoPNG("../plots/bubble_map.png", 1200, 800)
 # bbl_plot
 # dev.off()
-CairoPNG("../plots/ecoprov_map.png", 1200, 600)
+png("../snow_docs/plots/ecoprov_map.png", 1200, 700, "px")
 prov_plot
 dev.off()
-CairoPNG("../plots/ONI_map.png", 1200, 600)
+png("../snow_docs/plots/ONI_map.png", 1500, 900, "px")
 oni_plot
 dev.off()
-CairoPNG("../plots/calendar_plot.png", width = 1200, height = 600)
+png("../snow_docs/plots/dot_map.png", 1000, 600, "px")
+dot_plot
+dev.off()
+png("../snow_docs/plots/calendar_plot.png", 1200, 700, "px")
 cal_plot
+dev.off()
+png("../snow_docs/plots/SCI_boxplot.png", 800, 500, "px")
+SCI_plot
+dev.off()
+png("../snow_docs/plots/elevation_plot.png", 1000, 700, "px")
+elev_plot
 dev.off()
