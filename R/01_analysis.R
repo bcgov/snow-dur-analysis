@@ -35,6 +35,13 @@ dfo <- read.csv("../data/snow/original_ONI.csv")
 # df_bbl <- df_full[, c("lon", "lat", "COR_Sprg_Start", "COR_Sum_Start", "COR_Fall_Start", "COR_Wint_Start")]
 # df_bbl <- melt(df_bbl, id.vars = c("lon", "lat"))
 
+## extracting relevant columns and calculating average snow cover index for each ecoprovinces
+df_prov <- df_full %>%
+  select(c(ECOPROVINCE_NAME, grep("SCI_20", colnames(df_full)))) %>%
+  gather(key = variable, value = value, -ECOPROVINCE_NAME) %>%
+  group_by(ECOPROVINCE_NAME, variable) %>%
+  dplyr::summarise(SCI_avg = mean(value, na.rm = TRUE))
+
 ## snow start-end calender dataframe
 df_cal <- select(df_full, ID, grep("INTs_20", colnames(df_full)), grep("INTe_20", colnames(df_full)))
 df_cal_long <- df_cal %>%
@@ -80,6 +87,7 @@ df_oni_long[, c("measurements", "year")] <- str_split_fixed(df_oni_long$measurem
 df_oni_long <- merge(df_oni_long, dfo)
 df_oni_long <- melt(df_oni_long, id.vars = c("year", "ECOPROVINCE_NAME", "measurements", "value"),
                     variable.name = "month", value.name = "ONI")
+df_oni_long$monyear <- as.Date(paste(df_oni_long$year, "-", df_oni_long$month, "-01", sep = ""), format = "%Y-%b-%d")
 
 ## extracting hydrological season data from original dataframe
 df_oni_long$season <- NA
@@ -120,13 +128,6 @@ ecoprov <- st_intersection(ecoprovinces(), bc_bound())
 ecoprov <- ms_simplify(ecoprov, keep = 0.02, keep_shapes = TRUE)
 ecosec <- st_intersection(ecosections(), bc_bound())
 ecosec <- ms_simplify(ecosec, keep = 0.02, keep_shapes = TRUE)
-
-## extracting relevant columns and calculating average snow cover index for each ecoprovinces
-df_prov <- df_full %>%
-  select(c(ECOPROVINCE_NAME, grep("SCI_20", colnames(df_full)))) %>%
-  gather(key = variable, value = value, -ECOPROVINCE_NAME) %>%
-  group_by(ECOPROVINCE_NAME, variable) %>%
-  dplyr::summarise(SCI_avg = mean(value, na.rm = TRUE))
 
 ## joining spatial and tabular dataframes
 df_prov <- left_join(ecoprov, df_prov, by = "ECOPROVINCE_NAME")
