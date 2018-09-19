@@ -73,31 +73,25 @@ for (i in 1:(nrow(dfo)-1)) {
   dfo[i, c("Jan", "Feb", "Mar", "Apr", "May")] <- map(dfo[c("Jan", "Feb", "Mar", "Apr", "May")], i + 1)
 }
 dfo <- dfo[-nrow(dfo), ]
+dfo$year <- as.character(dfo$year) # for joining dataframes later
 
 ## preparing dataframe for correlation test of ONI months with each snow measurement
 df_oni_long <- df_full %>%
   select(ECOPROVINCE_CODE, grep("SCI_20", colnames(df_full)), grep("INT_20", colnames(df_full)),
          grep("INTs_20", colnames(df_full)), grep("INTe_20", colnames(df_full))) %>%
-  gather(key = measurements, value = value, -ECOPROVINCE_CODE)
-
-## splitting measurement name and year
-df_oni_long[, c("measurements", "year")] <- str_split_fixed(df_oni_long$measurements, "_", 2)
-
-## merging with ONI dataframe and melting by month names
-df_oni_long <- merge(df_oni_long, dfo)
-df_oni_long <- melt(df_oni_long, id.vars = c("year", "ECOPROVINCE_CODE", "measurements", "value"),
-                    variable.name = "month", value.name = "ONI")
+  gather(key = measurements, value = value, -ECOPROVINCE_CODE) %>%
+  mutate(year = sub(".*_", "", measurements),
+         measurements = sub("_.*", "", measurements)) %>%
+  left_join(dfo) %>%
+  gather(key = "month", value = "ONI", Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec) %>%
+  mutate(season = case_when(month == "Dec" | month == "Jan" | month == "Feb" ~ "Winter",
+                       month == "Mar" | month == "Apr" | month == "May" ~ "Spring",
+                       month == "Jun" | month == "Jul" | month == "Aug" ~ "Summer",
+                       month == "Sep" | month == "Oct" | month == "Nov" ~ "Fall"))
 
 ## formatting month-year and year columns as date class for ONI and SCI summaries
 df_oni_long$monyear <- as.Date(paste(df_oni_long$year, "-", df_oni_long$month, "-01", sep = ""), format = "%Y-%b-%d")
 df_oni_long$year <- as.Date(paste(df_oni_long$year, "-01-01", sep = ""), format = "%Y-%m-%d")
-
-## extracting hydrological season data from original dataframe
-df_oni_long$season <- NA
-df_oni_long[df_oni_long$month == "Dec" | df_oni_long$month == "Jan" | df_oni_long$month == "Feb", "season"] <- "Winter"
-df_oni_long[df_oni_long$month == "Mar" | df_oni_long$month == "Apr" | df_oni_long$month == "May", "season"] <- "Spring"
-df_oni_long[df_oni_long$month == "Jun" | df_oni_long$month == "Jul" | df_oni_long$month == "Aug", "season"] <- "Summer"
-df_oni_long[df_oni_long$month == "Sep" | df_oni_long$month == "Oct" | df_oni_long$month == "Nov", "season"] <- "Fall"
 
 ## Pearson correlation test by each ecoprovince
 df_oni <- df_oni_long %>%
@@ -141,7 +135,7 @@ df_dots <- df_dots %>%
   st_buffer(0) # multipolygon
 
 ## for ONI
-df_oni_prov <- left_join(ecoprov, df_oni, by = "ECOPROVINCE_NAME")
+df_oni_prov <- left_join(ecoprov, df_oni, by = "ECOPROVINCE_CODE")
 
 ## creating equal interval grids to combine with spatial dataframe
 ## dictates the density of dots, does not change grouped values
@@ -151,4 +145,3 @@ df_grid <- st_make_grid(df_dots, n= 50)
 df_dots_map <- df_dots %>%
   st_interpolate_aw(to = df_grid, extensive = FALSE) %>%
   st_centroid()
-
