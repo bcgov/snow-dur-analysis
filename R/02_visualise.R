@@ -11,7 +11,6 @@
 # See the License for the specific language governing permissions and limitations under the License.
 
 
-library(rcartocolor) # palette
 library(RColorBrewer)
 
 ## map viz
@@ -86,6 +85,21 @@ SCI_plot <- df_full %>%
   theme(panel.grid = element_blank(), axis.ticks = element_blank(), text = element_text(size = 14),
         plot.title = element_text(size = 24, hjust = 0.5, margin = margin(10, 0, 15, 0)))
 SCI_plot
+
+## for hydrozones
+SCI_plot2 <- df_full %>%
+  select(HYDROLOGICZONE_NAME, SCI_mean) %>%
+  group_by(HYDROLOGICZONE_NAME) %>%
+  mutate(SCI_eco = mean(SCI_mean, na.rm = TRUE)) %>%
+  ggplot(aes(HYDROLOGICZONE_NAME, SCI_mean, fill = SCI_eco)) +
+  geom_boxplot() +
+  coord_flip() +
+  labs(title = "Mean SCI per Pixel among Hydrozones (2002-2017)", x = "", y = "SCI averaged by pixel") +
+  scale_fill_gradientn(colours = pal, name = "SCI by\nHydrozone") +
+  theme_light() +
+  theme(panel.grid = element_blank(), axis.ticks = element_blank(), text = element_text(size = 14),
+        plot.title = element_text(size = 24, hjust = 0.5, margin = margin(10, 0, 15, 0)))
+SCI_plot2
 
 ## SCI against elevation, using mean SCI and elevation per observation point data
 elev_plot <- ggplot(df_full, aes(SCI_mean, z)) +
@@ -163,6 +177,9 @@ cal_plot
 dev.off()
 png("../snow_docs/plots/SCI_boxplot.png", 800, 500, "px")
 SCI_plot
+dev.off()
+png("../snow_docs/plots/SCI_boxplot.png", 800, 600, "px")
+SCI_plot2
 dev.off()
 png("../snow_docs/plots/elevation_plot.png", 1000, 700, "px")
 elev_plot
