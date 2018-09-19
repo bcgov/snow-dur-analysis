@@ -33,7 +33,7 @@ prov_plot <- ggplot() +
   facet_wrap(facets = vars(variable)) +
   theme_void() +
   theme(panel.grid = element_line(colour = "transparent"), text = element_text(size = 14),
-        plot.title = element_text(size = 24, hjust = 0.5, margin=margin(10,0,15,0)))
+        plot.title = element_text(size = 24, hjust = 0.5, margin = margin(10, 0, 15, 0)))
 prov_plot
 
 ## Oceanic Nino Index (ONI) correlation plot
@@ -44,7 +44,7 @@ oni_plot <- ggplot() +
   facet_wrap(c("season", "measurements")) +
   theme_void() +
   theme(panel.grid = element_line(colour = "transparent"), text = element_text(size = 16),
-        plot.title = element_text(size = 24, hjust = 0.5, margin=margin(10,0,15,0)))
+        plot.title = element_text(size = 24, hjust = 0.5, margin = margin(10, 0, 15, 0)))
 oni_plot
 
 ## dot plot showing average snow amount each ecosection, equal unit
@@ -54,7 +54,7 @@ dot_plot <- ggplot(df_dots_map) +
   scale_size_area(name = "SCI sum") +
   theme_void() +
   theme(panel.grid = element_line(colour = "transparent"), text = element_text(size = 14),
-        plot.title = element_text(size = 24, hjust = 0.5, margin=margin(10,0,0,0)))
+        plot.title = element_text(size = 24, hjust = 0.5, margin = margin(10, 0, 0, 0)))
 dot_plot
 
 ## static plots
@@ -70,7 +70,7 @@ cal_plot <- ggplot(df_cal_long, aes(day, year, fill = n)) +
   theme_light() +
   theme(panel.grid = element_blank(), strip.background = element_rect(fill = "transparent", colour = "grey"),
         strip.text = element_text(colour = "black"), axis.ticks = element_blank(), text = element_text(size = 14),
-        plot.title = element_text(size = 24, hjust = 0.5, margin=margin(10,0,15,0)))
+        plot.title = element_text(size = 24, hjust = 0.5, margin = margin(10, 0, 15, 0)))
 cal_plot
 
 ## boxplot of SCI averaged by pixel, coloured by SCI averaged by ecoprovince
@@ -79,12 +79,12 @@ SCI_plot <- df_full %>%
   group_by(ECOPROVINCE_CODE) %>%
   mutate(SCI_eco = mean(SCI_mean, na.rm = TRUE)) %>%
   ggplot(aes(ECOPROVINCE_CODE, SCI_mean, fill = SCI_eco)) +
-    geom_boxplot() +
-    labs(title = "Mean SCI per Pixel among Ecoprovinces (2002-2017)", x = "", y = "SCI averaged by pixel") +
-    scale_fill_gradientn(colours = pal, name = "SCI by\nEcoprovince") +
-    theme_light() +
-    theme(panel.grid = element_blank(), axis.ticks = element_blank(), text = element_text(size = 14),
-          plot.title = element_text(size = 24, hjust = 0.5, margin=margin(10,0,15,0)))
+  geom_boxplot() +
+  labs(title = "Mean SCI per Pixel among Ecoprovinces (2002-2017)", x = "", y = "SCI averaged by pixel") +
+  scale_fill_gradientn(colours = pal, name = "SCI by\nEcoprovince") +
+  theme_light() +
+  theme(panel.grid = element_blank(), axis.ticks = element_blank(), text = element_text(size = 14),
+        plot.title = element_text(size = 24, hjust = 0.5, margin = margin(10, 0, 15, 0)))
 SCI_plot
 
 ## SCI against elevation, using mean SCI and elevation per observation point data
@@ -96,8 +96,33 @@ elev_plot <- ggplot(df_full, aes(SCI_mean, z)) +
   theme_light() +
   theme(panel.grid = element_blank(), strip.background = element_rect(fill = "transparent", colour = "grey"),
         strip.text = element_text(colour = "black"), axis.ticks = element_blank(), text = element_text(size = 14),
-        plot.title = element_text(size = 24, hjust = 0.5, margin=margin(10,0,15,0)))
+        plot.title = element_text(size = 24, hjust = 0.5, margin = margin(10, 0, 15, 0)))
 elev_plot
+
+## ONI and SCI time series plot
+ts_plot <- df_oni_long %>%
+  filter(measurements == "SCI") %>%
+  group_by(ECOPROVINCE_CODE, year) %>%
+  dplyr::summarise(SCI = mean(value, na.rm = TRUE)) %>%
+  ggplot() +
+  geom_line(mapping = aes(year, SCI, colour = ECOPROVINCE_CODE), size = 0.7) +
+  labs(title = "Annual Mean SCI by Ecoprovinces", x = "") +
+  scale_color_brewer(palette = "Paired", name = "") +
+  theme_light() +
+  theme(panel.grid = element_blank(), axis.ticks = element_blank(), text = element_text(size = 14),
+        plot.title = element_text(size = 24, hjust = 0.5, margin = margin(10, 0, 15, 0)))
+ts_plot
+
+ts_plot2 <- df_oni_long %>%
+  group_by(monyear) %>%
+  dplyr::summarise(ONI = mean(ONI, na.rm = TRUE)) %>%
+  ggplot() +
+  geom_line(mapping = aes(monyear, ONI)) +
+  labs(title = "Monthly Mean ONI Against Time", x = "") +
+  theme_light() +
+  theme(panel.grid = element_blank(), axis.ticks = element_blank(), text = element_text(size = 14),
+        plot.title = element_text(size = 24, hjust = 0.5, margin = margin(10, 0, 15, 0)))
+ts_plot2
 
 ## looping over seasonal ONI correlation with different snow measurements plot
 for (i in 1:length(unique(df_oni$measurements))) {

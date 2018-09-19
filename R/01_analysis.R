@@ -76,18 +76,21 @@ dfo <- dfo[-nrow(dfo), ]
 
 ## preparing dataframe for correlation test of ONI months with each snow measurement
 df_oni_long <- df_full %>%
-  select(ECOPROVINCE_NAME, grep("SCI_20", colnames(df_full)), grep("INT_20", colnames(df_full)),
+  select(ECOPROVINCE_CODE, grep("SCI_20", colnames(df_full)), grep("INT_20", colnames(df_full)),
          grep("INTs_20", colnames(df_full)), grep("INTe_20", colnames(df_full))) %>%
-  gather(key = measurements, value = value, -ECOPROVINCE_NAME)
+  gather(key = measurements, value = value, -ECOPROVINCE_CODE)
 
 ## splitting measurement name and year
 df_oni_long[, c("measurements", "year")] <- str_split_fixed(df_oni_long$measurements, "_", 2)
 
 ## merging with ONI dataframe and melting by month names
 df_oni_long <- merge(df_oni_long, dfo)
-df_oni_long <- melt(df_oni_long, id.vars = c("year", "ECOPROVINCE_NAME", "measurements", "value"),
+df_oni_long <- melt(df_oni_long, id.vars = c("year", "ECOPROVINCE_CODE", "measurements", "value"),
                     variable.name = "month", value.name = "ONI")
+
+## formatting month-year and year columns as date class for ONI and SCI summaries
 df_oni_long$monyear <- as.Date(paste(df_oni_long$year, "-", df_oni_long$month, "-01", sep = ""), format = "%Y-%b-%d")
+df_oni_long$year <- as.Date(paste(df_oni_long$year, "-01-01", sep = ""), format = "%Y-%m-%d")
 
 ## extracting hydrological season data from original dataframe
 df_oni_long$season <- NA
@@ -98,13 +101,13 @@ df_oni_long[df_oni_long$month == "Sep" | df_oni_long$month == "Oct" | df_oni_lon
 
 ## Pearson correlation test by each ecoprovince
 df_oni <- df_oni_long %>%
-  ddply(.(ECOPROVINCE_NAME, measurements, month), mutate,
+  ddply(.(ECOPROVINCE_CODE, measurements, month), mutate,
         "cor" = cor.test(value, ONI, method = "pearson")$estimate,
         "p_value" = cor.test(value, ONI, method = "pearson")$p.value) %>%
-  ddply(.(ECOPROVINCE_NAME, measurements, season), mutate,
+  ddply(.(ECOPROVINCE_CODE, measurements, season), mutate,
         "cor_seasonal" = cor.test(value, ONI, method = "pearson")$estimate,
         "p_value_seasonal" = cor.test(value, ONI, method = "pearson")$p.value) %>%
-  group_by(ECOPROVINCE_NAME, season, measurements) %>%
+  group_by(ECOPROVINCE_CODE, season, measurements) %>%
   mutate(cor_min = min(cor), cor_max = max(cor))
 
 ## keeping only unique correlation records
