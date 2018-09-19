@@ -42,6 +42,13 @@ df_prov <- df_full %>%
   group_by(ECOPROVINCE_NAME, variable) %>%
   dplyr::summarise(SCI_avg = mean(value, na.rm = TRUE))
 
+## for hydrozones
+df_hydro <- df_full %>%
+  select(c(HYDROLOGICZONE_NAME, grep("SCI_20", colnames(df_full)))) %>%
+  gather(key = variable, value = value, -HYDROLOGICZONE_NAME) %>%
+  group_by(HYDROLOGICZONE_NAME, variable) %>%
+  dplyr::summarise(SCI_avg = mean(value, na.rm = TRUE))
+
 ## snow start-end calender dataframe
 df_cal <- select(df_full, ID, grep("INTs_20", colnames(df_full)), grep("INTe_20", colnames(df_full)))
 df_cal_long <- df_cal %>%
@@ -125,9 +132,12 @@ ecoprov <- st_intersection(ecoprovinces(), bc_bound())
 ecoprov <- ms_simplify(ecoprov, keep = 0.02, keep_shapes = TRUE)
 ecosec <- st_intersection(ecosections(), bc_bound())
 ecosec <- ms_simplify(ecosec, keep = 0.02, keep_shapes = TRUE)
+hydro <- st_intersection(hydrozones(), bc_bound())
+hydro <- ms_simplify(hydro, keep = 0.02, keep_shapes = TRUE)
 
 ## joining spatial and tabular dataframes
 df_prov <- left_join(ecoprov, df_prov, by = "ECOPROVINCE_NAME")
+df_hydro <- left_join(hydro, df_hydro, by = "HYDROLOGICZONE_NAME")
 
 df_dots <- left_join(ecosec, df_dots, by = "ECOSECTION_NAME")
 df_dots <- df_dots %>%
