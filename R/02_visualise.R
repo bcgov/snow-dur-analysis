@@ -178,7 +178,7 @@ dev.off()
 png("../snow_docs/plots/SCI_boxplot.png", 800, 500, "px")
 SCI_plot
 dev.off()
-png("../snow_docs/plots/SCI_boxplot.png", 800, 600, "px")
+png("../snow_docs/plots/SCI_boxplot_hydro.png", 800, 600, "px")
 SCI_plot2
 dev.off()
 png("../snow_docs/plots/elevation_plot.png", 1000, 700, "px")
