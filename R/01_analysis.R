@@ -37,14 +37,14 @@ dfo <- read.csv("../data/snow/original_ONI.csv")
 
 ## extracting relevant columns and calculating average snow cover index for each ecoprovinces
 df_prov <- df_full %>%
-  select(c(ECOPROVINCE_NAME, grep("SCI_20", colnames(df_full)))) %>%
+  select(ECOPROVINCE_NAME, grep("SCI_20", colnames(df_full))) %>%
   gather(key = variable, value = value, -ECOPROVINCE_NAME) %>%
   group_by(ECOPROVINCE_NAME, variable) %>%
   dplyr::summarise(SCI_avg = mean(value, na.rm = TRUE))
 
 ## for hydrozones
 df_hydro <- df_full %>%
-  select(c(HYDROLOGICZONE_NAME, grep("SCI_20", colnames(df_full)))) %>%
+  select(HYDROLOGICZONE_NAME, grep("SCI_20", colnames(df_full))) %>%
   gather(key = variable, value = value, -HYDROLOGICZONE_NAME) %>%
   group_by(HYDROLOGICZONE_NAME, variable) %>%
   dplyr::summarise(SCI_avg = mean(value, na.rm = TRUE))
