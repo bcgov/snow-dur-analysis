@@ -14,14 +14,6 @@
 library(RColorBrewer)
 
 ## map viz
-## bubble plot
-# bbl_plot <- ggplot() +
-#   geom_sf(data = df_bbl, aes(size = value), shape = 1, show.legend = "point") +
-#   facet_wrap("variable") +
-#   theme_void() +
-#   theme(panel.grid = element_line(colour = "transparent"))
-# bbl_plot
-
 pal <- brewer.pal(9, "Blues")
 
 ## Snow Cover Index (SCI) by ecoprovince
@@ -143,7 +135,7 @@ for (i in 1:length(unique(df_oni$measurements))) {
 
   oni_cor_plot <- df_oni %>%
     filter(measurements == unique(df_oni$measurements)[i]) %>%
-    ggplot(mapping = aes(ECOPROVINCE_NAME, cor_seasonal, fill = p_value_seasonal)) +
+    ggplot(mapping = aes(ECOPROVINCE_CODE, cor_seasonal, fill = p_value_seasonal)) +
     geom_errorbar(aes(ymin = cor_min, ymax = cor_max), width = 0.4) +
     geom_point(size = 4, shape = 21, alpha = 0.5) +
     scale_fill_viridis_c(direction = -1, name = "p-value") +
