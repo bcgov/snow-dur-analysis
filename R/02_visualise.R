@@ -12,6 +12,7 @@
 
 
 library(RColorBrewer)
+library(patchwork)
 
 pal <- brewer.pal(9, "Blues")
 
@@ -105,29 +106,31 @@ elev_plot <- ggplot(df_full, aes(SCI_mean, z)) +
 elev_plot
 
 ## ONI and SCI time series plot
-ts_plot <- df_oni_long %>%
+ts_SCI <- df_oni_long %>%
   filter(measurements == "SCI") %>%
   group_by(ECOPROVINCE_CODE, year) %>%
   dplyr::summarise(SCI = mean(value, na.rm = TRUE)) %>%
   ggplot() +
   geom_line(mapping = aes(year, SCI, colour = ECOPROVINCE_CODE), size = 0.7) +
-  labs(title = "Annual Mean SCI by Ecoprovinces", x = "") +
+  labs(x = "", y = "Annual mean SCI") +
   scale_color_brewer(palette = "Paired", name = "") +
   theme_light() +
   theme(panel.grid = element_blank(), axis.ticks = element_blank(), text = element_text(size = 14),
         plot.title = element_text(size = 24, hjust = 0.5, margin = margin(10, 0, 15, 0)))
-ts_plot
+ts_SCI
 
-ts_plot2 <- df_oni_long %>%
+ts_ONI <- df_oni_long %>%
   group_by(monyear) %>%
   dplyr::summarise(ONI = mean(ONI, na.rm = TRUE)) %>%
   ggplot() +
   geom_line(mapping = aes(monyear, ONI)) +
-  labs(title = "Monthly Mean ONI Against Time", x = "") +
+  labs(x = "", y = "Monthly Mean ONI") +
   theme_light() +
-  theme(panel.grid = element_blank(), axis.ticks = element_blank(), text = element_text(size = 14),
-        plot.title = element_text(size = 24, hjust = 0.5, margin = margin(10, 0, 15, 0)))
-ts_plot2
+  theme(panel.grid = element_blank(), axis.ticks = element_blank(), text = element_text(size = 14))
+ts_ONI
+
+ts_plot <- ts_SCI + ts_ONI + plot_layout(ncol = 1, heights = c(3, 1))
+ts_plot
 
 ## looping over seasonal ONI correlation with different snow measurements plot
 for (i in 1:length(unique(df_oni$measurements))) {
@@ -174,4 +177,7 @@ SCI_plot2
 dev.off()
 png("../snow_docs/plots/elevation_plot.png", 1000, 700, "px")
 elev_plot
+dev.off()
+png("../snow_docs/plots/time-series_plot.png", 800, 600, "px")
+ts_plot
 dev.off()
