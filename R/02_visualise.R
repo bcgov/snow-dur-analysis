@@ -140,7 +140,7 @@ for (i in 1:length(unique(df_oni$measurements))) {
     ggplot(mapping = aes(ECOPROVINCE_CODE, cor_seasonal, fill = p_value_seasonal)) +
     geom_errorbar(aes(ymin = cor_min, ymax = cor_max), width = 0.4) +
     geom_point(size = 4, shape = 21, alpha = 0.5) +
-    scale_fill_viridis_c(direction = -1, name = "p-value", breaks = 0.05, seq(0, 0.8, 0.2))) +
+    scale_fill_viridis_c(direction = -1, name = "p-value", breaks = 0.05, seq(0, 0.8, 0.2)) +
     labs(x = "", y = paste("ONI Correlation with", unique(df_oni$measurements)[i])) +
     coord_flip() +
     facet_wrap("season") +
