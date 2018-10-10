@@ -64,6 +64,22 @@ cal_plot <- ggplot(df_cal_long, aes(day, year, fill = n)) +
         plot.title = element_text(size = 24, hjust = 0.5, margin = margin(10, 0, 15, 0)))
 cal_plot
 
+## snow duration plot
+dur_plot <- df_full %>%
+  select(ID, ECOPROVINCE_NAME, grep("INTs_20", colnames(df_full)), grep("INTe_20", colnames(df_full))) %>%
+  gather(key = variable, value = doy, -ID, -ECOPROVINCE_NAME) %>%
+  mutate(year = as.character(substr(variable, 6, 10)), variable = substr(variable, 1,4)) %>%
+  group_by(variable, ECOPROVINCE_NAME, year) %>%
+  dplyr::summarise(doy = mean(doy, na.rm =  TRUE)) %>%
+  ggplot(aes(ECOPROVINCE_NAME, doy)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(year ~ .) +
+  theme_light() +
+  theme(panel.grid = element_blank(), strip.background = element_rect(fill = "transparent", colour = "grey"),
+        strip.text = element_text(colour = "black"), axis.ticks = element_blank())
+dur_plot
+
 ## boxplot of SCI averaged by pixel, coloured by SCI averaged by ecoprovince
 SCI_plot <- df_full %>%
   select(ECOPROVINCE_CODE, SCI_mean) %>%
