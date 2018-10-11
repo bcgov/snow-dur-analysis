@@ -75,12 +75,12 @@ dur_plot <- df_full %>%
   group_by(variable, ECOPROVINCE_CODE, year) %>%
   dplyr::summarise(doy = mean(doy, na.rm =  TRUE), INT = mean(INT, na.rm = TRUE)) %>%
   ggplot(aes(reorder(ECOPROVINCE_CODE, -INT), doy, colour = year)) +
-  geom_point(position = position_dodge(width = 0.7)) +
-  geom_line(position = position_dodge(width = 0.7), size = 1) +
+  geom_point(position = position_dodge(width = 0.8), size = 2) +
+  geom_line(position = position_dodge(width = 0.8), size = 0.8) +
   labs(x = "", y = "Date of Year") +
   scale_color_viridis_d(direction = -1, name = "") +
   theme_light() +
-  theme(panel.grid = element_blank(), axis.ticks = element_blank())
+  theme(panel.grid = element_blank(), axis.ticks = element_blank(), text = element_text(size = 14))
 dur_plot
 
 ## boxplot of SCI averaged by pixel, coloured by SCI averaged by ecoprovince
@@ -199,4 +199,7 @@ elev_plot
 dev.off()
 png("../snow_docs/plots/time-series_plot.png", 800, 600, "px")
 ts_plot
+dev.off()
+png("../snow_docs/plots/duration_plot.png", 1000, 800, "px")
+dur_plot
 dev.off()
