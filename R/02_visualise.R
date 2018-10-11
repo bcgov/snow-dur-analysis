@@ -71,14 +71,13 @@ dur_plot <- df_full %>%
   mutate(year = as.character(substr(variable, 6, 10)), variable = substr(variable, 1,4)) %>%
   group_by(variable, ECOPROVINCE_CODE, year) %>%
   dplyr::summarise(doy = mean(doy, na.rm =  TRUE)) %>%
-  ggplot(aes(ECOPROVINCE_CODE, doy)) +
-  geom_point() +
-  geom_line() +
+  ggplot(aes(ECOPROVINCE_CODE, doy, colour = year)) +
+  geom_point(position = position_dodge(width = 0.7)) +
+  geom_line(position = position_dodge(width = 0.7), size = 1) +
   labs(x = "", y = "Date of Year") +
-  facet_wrap(year ~ .) +
+  scale_color_viridis_d(direction = -1, name = "") +
   theme_light() +
-  theme(panel.grid = element_blank(), strip.background = element_rect(fill = "transparent", colour = "grey"),
-        strip.text = element_text(colour = "black"), axis.ticks = element_blank())
+  theme(panel.grid = element_blank(), axis.ticks = element_blank())
 dur_plot
 
 ## boxplot of SCI averaged by pixel, coloured by SCI averaged by ecoprovince
