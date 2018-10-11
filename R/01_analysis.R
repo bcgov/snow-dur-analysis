@@ -12,7 +12,6 @@
 
 library(plyr) # ddply function for correlation test
 library(tidyverse) # data analysis and viz
-library(reshape2) # melt function
 library(rmapshaper) # simplify shapefiles for viz
 library(bcmaps)
 library(sf) # geospatial data processing
@@ -29,11 +28,6 @@ df_full <- df_full[complete.cases(df_full$ECOPROVINCE_NAME), ]
 ## http://origin.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php
 ## column names indicate averaged results for three months
 dfo <- read.csv("../data/snow/original_ONI.csv")
-
-## df_full analysis ####
-## correlation with ONI by point
-# df_bbl <- df_full[, c("lon", "lat", "COR_Sprg_Start", "COR_Sum_Start", "COR_Fall_Start", "COR_Wint_Start")]
-# df_bbl <- melt(df_bbl, id.vars = c("lon", "lat"))
 
 ## extracting relevant columns and calculating average snow cover index for each ecoprovinces
 df_prov <- df_full %>%
