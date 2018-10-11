@@ -66,12 +66,15 @@ cal_plot
 
 ## snow duration plot
 dur_plot <- df_full %>%
-  select(ID, ECOPROVINCE_CODE, grep("INTs_20", colnames(df_full)), grep("INTe_20", colnames(df_full))) %>%
+  select(ID, ECOPROVINCE_CODE, grep("INTs_20", colnames(df_full)), grep("INTe_20", colnames(df_full)),
+         grep("INT_20", colnames(df_full))) %>% # for ordering
   gather(key = variable, value = doy, -ID, -ECOPROVINCE_CODE) %>%
-  mutate(year = as.character(substr(variable, 6, 10)), variable = substr(variable, 1,4)) %>%
+  mutate(year = sub(".*_", "", variable), variable = sub("_.*", "", variable)) %>%
+  spread(variable, doy) %>%
+  gather(key = variable, value = doy, -ID, -ECOPROVINCE_CODE, -INT, -year) %>%
   group_by(variable, ECOPROVINCE_CODE, year) %>%
-  dplyr::summarise(doy = mean(doy, na.rm =  TRUE)) %>%
-  ggplot(aes(ECOPROVINCE_CODE, doy, colour = year)) +
+  dplyr::summarise(doy = mean(doy, na.rm =  TRUE), INT = mean(INT, na.rm = TRUE)) %>%
+  ggplot(aes(reorder(ECOPROVINCE_CODE, -INT), doy, colour = year)) +
   geom_point(position = position_dodge(width = 0.7)) +
   geom_line(position = position_dodge(width = 0.7), size = 1) +
   labs(x = "", y = "Date of Year") +
