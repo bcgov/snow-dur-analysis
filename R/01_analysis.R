@@ -44,9 +44,9 @@ df_hydro <- df_full %>%
   dplyr::summarise(SCI_avg = mean(value, na.rm = TRUE))
 
 ## snow start-end calender dataframe
-df_cal <- select(df_full, ID, grep("INTs_20", colnames(df_full)), grep("INTe_20", colnames(df_full)))
+df_cal <- select(df_full, ID, ECOPROVINCE_CODE, grep("INTs_20", colnames(df_full)), grep("INTe_20", colnames(df_full)))
 df_cal_long <- df_cal %>%
-  gather(key = variable, value = doy, -ID) %>%
+  gather(key = variable, value = doy, -ID, -ECOPROVINCE_CODE) %>%
   mutate(year = as.character(substr(variable, 6, 10)),
          variable = substr(variable, 1,4),
          date = as.Date(doy, origin = paste0(year, '-09-13')),

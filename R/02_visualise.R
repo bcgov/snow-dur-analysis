@@ -175,9 +175,6 @@ for (i in 1:length(unique(df_oni$measurements))) {
 
 
 ## saving plots
-# CairoPNG("../plots/bubble_map.png", 1200, 800)
-# bbl_plot
-# dev.off()
 png("../snow_docs/plots/ecoprov_map.png", 1200, 700, "px")
 prov_plot
 dev.off()
