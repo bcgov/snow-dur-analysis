@@ -132,6 +132,7 @@ ts_SCI <- df_oni_long %>%
   ggplot() +
   geom_line(mapping = aes(year, SCI, colour = ECOPROVINCE_CODE), size = 0.7) +
   labs(x = "", y = "Annual mean SCI") +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
   scale_color_brewer(palette = "Paired", name = "") +
   theme_light() +
   theme(panel.grid = element_blank(), axis.ticks = element_blank(), text = element_text(size = 14),
@@ -144,6 +145,7 @@ ts_ONI <- df_oni_long %>%
   ggplot() +
   geom_line(mapping = aes(monyear, ONI)) +
   labs(x = "", y = "Monthly Mean ONI") +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
   theme_light() +
   theme(panel.grid = element_blank(), axis.ticks = element_blank(), text = element_text(size = 14))
 ts_ONI
