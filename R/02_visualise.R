@@ -145,7 +145,8 @@ ts_ONI <- df_oni_long %>%
   ggplot() +
   geom_line(mapping = aes(monyear, ONI)) +
   labs(x = "", y = "Monthly Mean ONI") +
-  scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y",
+               limits = as.Date(c("2002-01-01", "2017-01-01"))) +
   theme_light() +
   theme(panel.grid = element_blank(), axis.ticks = element_blank(), text = element_text(size = 14))
 ts_ONI
