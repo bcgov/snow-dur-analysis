@@ -52,3 +52,27 @@ sum_dur <- df_full %>%
 sum_oni <- df_oni_long %>%
   group_by(year, season) %>%
   summarise(seasonal_ONI = mean(ONI, na.rm = TRUE))
+
+## Seasonal ONI correlation with measurements for all years
+sum_oni_cor <- df_oni[!duplicated(df_oni$cor_seasonal), ]
+sum_oni_cor <- select(sum_oni_cor, ECOPROVINCE_CODE, measurements, season, cor_seasonal,
+                      p_value_seasonal)
+
+## taking a look at correlation magnititude by taking the average of grouped variables
+sum_oni_grp <- df_oni %>%
+  group_by(season, measurements) %>%
+  summarise(avg_cor = mean(cor_seasonal, na.rm = TRUE))
+
+## spring showing most positive correlation between ONI and INTs, get summaries
+sum_oni_cor %>% filter(cor_seasonal > 0 & season == "Spring" & measurements == "INTs") %>%
+  summary()
+
+## spring ONI correlates with INTe the most negatively
+sum_oni_cor %>% filter(season == "Spring" & measurements == "INTe") %>%
+  summary()
+
+## fall ONI correlates with SCI and INT most negatively
+sum_oni_cor %>% filter(cor_seasonal < 0 & season == "Fall" & measurements == "SCI") %>%
+  summary()
+sum_oni_cor %>% filter(cor_seasonal < 0 & season == "Fall" & measurements == "INT") %>%
+  summary()
