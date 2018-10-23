@@ -22,11 +22,6 @@ sum_boxplot <- df_full %>%
          SCI_min = min(SCI_mean, na.rm = TRUE),
          SCI_max = max(SCI_mean, na.rm = TRUE))
 
-## calendar plot dates for snow start and end by year
-sum_cal <- df_cal_long %>%
-  group_by(ECOPROVINCE_CODE, variable, year) %>%
-  dplyr::summarise(earliest = min(date, na.rm = TRUE),
-                   latest = max(date, na.rm = TRUE))
 
 ## largest number of sites that started and ended snowing each year
 for (i in 2002:2018) {
