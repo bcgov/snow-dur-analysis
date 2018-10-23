@@ -18,7 +18,7 @@ sum_boxplot <- df_full %>%
   select(ECOPROVINCE_CODE, SCI_mean) %>%
   group_by(ECOPROVINCE_CODE) %>%
   dplyr::summarise(SCI_eco = mean(SCI_mean, na.rm = TRUE),
-         SCI_median = median(SCI_eco, na.rm = TRUE),
+         SCI_median = median(SCI_mean, na.rm = TRUE),
          SCI_min = min(SCI_mean, na.rm = TRUE),
          SCI_max = max(SCI_mean, na.rm = TRUE))
 
