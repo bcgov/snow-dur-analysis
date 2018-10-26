@@ -20,7 +20,8 @@ pal <- brewer.pal(9, "Blues")
 prov_plot <- ggplot() +
   geom_sf(data = df_prov, aes(fill = SCI_avg), lwd = 0.4) +
   labs(title = "Annual Mean Snow Cover Index (SCI) by Ecoprovince") +
-  scale_fill_gradientn(colours = pal, name = "Average SCI") +
+  scale_fill_gradientn(colours = pal, name = "Average SCI",
+                        limits = c(57, 230), na.value = "#001d49") + # tweaking SAL
   facet_wrap(facets = vars(variable)) +
   theme_void() +
   theme(panel.grid = element_line(colour = "transparent"), text = element_text(size = 14),
