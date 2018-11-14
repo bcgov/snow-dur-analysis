@@ -19,25 +19,21 @@ pal <- brewer.pal(9, "Blues")
 ## Snow Cover Index (SCI) by ecoprovince
 prov_plot <- ggplot() +
   geom_sf(data = df_prov, aes(fill = SCI_avg)) +
-  # labs(title = "Annual Mean Snow Cover Index (SCI) by Ecoprovince") +
   scale_fill_gradientn(colours = pal, name = "Average SCI",
                         limits = c(57, 230), na.value = "#001d49") + # tweaking SAL
   facet_wrap(facets = vars(variable)) +
   theme_void() +
   theme(panel.grid = element_line(colour = "transparent"), text = element_text(size = 12),
-        # plot.title = element_text(size = 24, hjust = 0.5, margin = margin(10, 0, 15, 0))
         strip.text = element_text(size = 12), legend.text = element_text(size = 12))
 prov_plot
 
 ## Oceanic Nino Index (ONI) correlation plot
 oni_plot <- ggplot() +
   geom_sf(data = df_oni_prov, aes(fill = cor)) +
-  # labs(title = "Oceanic Nino Index (ONI) Correlation with Snow Measurements") +
   scale_fill_viridis_c(name = "Correlation") +
   facet_wrap(c("season", "measurements")) +
   theme_void() +
   theme(panel.grid = element_line(colour = "transparent"), text = element_text(size = 12),
-        # plot.title = element_text(size = 24, hjust = 0.5, margin = margin(10, 0, 15, 0))
         strip.text = element_text(size = 12), legend.text = element_text(size = 12))
 oni_plot
 
@@ -55,9 +51,7 @@ dot_plot
 ## calendar plot for snow start and end dates
 cal_plot <- ggplot(df_cal_long, aes(day, year, fill = n)) +
   geom_tile(colour = "grey", width = 0.8) +
-  labs(
-    # title = "Snow Start and End Date by Year",
-       x = "", y = "") +
+  labs(x = "", y = "") +
   scale_fill_viridis_c(name = "Number\nof Sites") +
   scale_x_discrete(breaks = c("2018-01-07", "2018-03-12", "2018-06-15", "2018-09-17", "2018-12-30"),
                    labels = c("Jan", "Mar", "Jun", "Sep", "Dec")) +
@@ -66,7 +60,6 @@ cal_plot <- ggplot(df_cal_long, aes(day, year, fill = n)) +
   theme_light() +
   theme(panel.grid = element_blank(), strip.background = element_rect(fill = "transparent", colour = "grey"),
         strip.text = element_text(colour = "black", size = 12), axis.ticks = element_blank(), text = element_text(size = 12),
-        # plot.title = element_text(size = 24, hjust = 0.5, margin = margin(10, 0, 15, 0))
         axis.text = element_text(size = 12), legend.text = element_text(size = 12))
 cal_plot
 
@@ -97,13 +90,10 @@ SCI_plot <- df_full %>%
   mutate(SCI_eco = mean(SCI_mean, na.rm = TRUE)) %>%
   ggplot(aes(ECOPROVINCE_CODE, SCI_mean, fill = SCI_eco)) +
   geom_boxplot() +
-  labs(
-    # title = "Mean SCI per Pixel among Ecoprovinces (2002-2017)",
-       x = "", y = "SCI averaged by pixel") +
+  labs(x = "", y = "SCI averaged by pixel") +
   scale_fill_gradientn(colours = pal, name = "SCI by\nEcoprovince") +
   theme_light() +
   theme(panel.grid = element_blank(), axis.ticks = element_blank(), text = element_text(size = 12),
-        # plot.title = element_text(size = 24, hjust = 0.5, margin = margin(10, 0, 15, 0))
         axis.text = element_text(size = 12), legend.text = element_text(size = 12))
 SCI_plot
 
@@ -125,15 +115,12 @@ SCI_plot2
 ## SCI against elevation, using mean SCI and elevation per observation point data
 elev_plot <- ggplot(df_full, aes(SCI_mean, z)) +
   geom_hex() +
-  labs(x = "Average SCI", y = "Elevation"
-    # title = "Correlation between SCI and Elevation by Ecoprovince",
-       ) +
+  labs(x = "Average SCI", y = "Elevation") +
   scale_fill_viridis_c() +
   facet_wrap("ECOPROVINCE_CODE") +
   theme_light() +
   theme(panel.grid = element_blank(), strip.background = element_rect(fill = "transparent", colour = "grey"),
         strip.text = element_text(colour = "black", size = 12), axis.ticks = element_blank(), text = element_text(size = 12),
-        # plot.title = element_text(size = 24, hjust = 0.5, margin = margin(10, 0, 15, 0))
         axis.text = element_text(size = 12), legend.text = element_text(size = 12))
 elev_plot
 
