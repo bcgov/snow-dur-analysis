@@ -49,7 +49,9 @@ dot_plot
 
 ## static plots
 ## calendar plot for snow start and end dates
-cal_plot <- ggplot(df_cal_long, aes(day, year, fill = n)) +
+cal_plot <- df_cal_long %>%
+  filter(variable == "Start Date" | variable == "End Date") %>%
+  ggplot(aes(day, year, fill = n)) +
   geom_tile(colour = "grey", width = 0.8) +
   labs(x = "", y = "") +
   scale_fill_viridis_c(name = "Number\nof Sites") +

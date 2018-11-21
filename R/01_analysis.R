@@ -44,24 +44,23 @@ df_hydro <- df_full %>%
   dplyr::summarise(SCI_avg = mean(value, na.rm = TRUE))
 
 ## snow start-end calender dataframe
-df_cal <- select(df_full, ID, ECOPROVINCE_CODE, grep("INTs_20", colnames(df_full)), grep("INTe_20", colnames(df_full)))
-df_cal_long <- df_cal %>%
+df_cal_long <- select(df_full, ID, ECOPROVINCE_CODE, grep("SCI_20", colnames(df_full)), grep("INT_20", colnames(df_full)),
+                      grep("INTs_20", colnames(df_full)), grep("INTe_20", colnames(df_full))) %>%
   gather(key = variable, value = doy, -ID, -ECOPROVINCE_CODE) %>%
-  mutate(year = as.character(substr(variable, 6, 10)),
-         variable = substr(variable, 1,4),
+  mutate(year = sub(".*_", "", variable),
+         variable = sub("_.*", "", variable),
          date = as.Date(doy, origin = paste0(year, '-09-13')),
          day = substr(date, 6, 10),
          year = substr(date, 1, 4)) %>% # outputting correct year after setting origin date
-  add_count(date) ## count distinguishes year+month+day
+  add_count(date) %>%  ## count distinguishes year+month+day
+  filter(complete.cases(doy))
 
-df_cal_long$variable <- factor(df_cal_long$variable, levels = c("INTs", "INTe"), labels = c("Start Date", "End Date"))
+df_cal_long$variable <- factor(df_cal_long$variable, levels = c("SCI", "INT", "INTs", "INTe"),
+                               labels = c("SCI", "INT", "Start Date", "End Date"))
 
 ## no more year specification for x axis and as character for invidual tiles on plot
 df_cal_long$day <- as.Date(df_cal_long$day, "%m-%d")
 df_cal_long$day <- as.character(df_cal_long$day)
-
-## remove NA
-df_cal_long <- df_cal_long[complete.cases(df_cal_long$date), ]
 
 
 ## dfo analysis ####
