@@ -68,6 +68,9 @@ df_cal_long <- df_cal_long[complete.cases(df_cal_long$date), ]
 ## renaming columns with the middle month
 colnames(dfo) <- c("year", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
 
+## taking out year 2018 data that's not a part of study period for time series plot
+dfo_ts <- dfo[-nrow(dfo), ]
+
 ## replacing Jan - May ONI with consecutive year's data (hydrological year Sept - Jun,
 ## but summer season ends in May. Decision is made for complete seasonal summaries)
 for (i in 1:(nrow(dfo)-1)) {
