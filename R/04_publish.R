@@ -14,14 +14,15 @@
 ## plots for paper publication
 
 library(lubridate)
+library(patchwork)
 
 ## figure 4 ONI time series plot
-dfo_ts %>%
+dfo_plot1 <- dfo_ts %>%
   gather(key = month, value = ONI, -year) %>%
   mutate(monyear = as.Date(paste(year, "-", month, "-01", sep = ""), format = "%Y-%b-%d")) %>%
   ggplot(aes(monyear, ONI)) +
   geom_bar(stat = "identity", aes(fill = ONI), colour = "black") +
-  labs(x = "") +
+  labs(x = "", y = "Monthly ONI") +
   geom_hline(yintercept = 0) +
   scale_fill_distiller(palette = "Spectral") +
   scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
@@ -29,6 +30,7 @@ dfo_ts %>%
   theme(legend.position = "none", aspect.ratio = 0.3,
         panel.grid.major = element_line(linetype = 2, size = .4, color = "dark grey"),
         panel.grid.minor = element_line(linetype = 2, size = .4, color = "dark grey"))
+dfo_plot1
 
 dfo_ts2 <- dfo_ts %>%
   gather(key = month, value = ONI, -year) %>%
@@ -42,13 +44,13 @@ dfo_ts2 <- dfo_ts %>%
 ## December from previous year, propagating December into next year
 dfo_ts2[dfo_ts2$month == "Dec", "year"] <- dfo_ts2[dfo_ts2$month == "Dec", "year"] + 1
 
-dfo_ts2 %>%
+dfo_plot2 <- dfo_ts2 %>%
   group_by(year, season) %>%
   mutate(seasonal_ONI = mean(ONI, na.rm = TRUE)) %>%
   filter(month == "Mar" | month == "Jun" | month == "Sep" | month == "Dec") %>%
   ggplot(aes(monyear, seasonal_ONI)) +
   geom_bar(stat = "identity", aes(fill = seasonal_ONI), colour = "black") +
-  labs(x = "") +
+  labs(x = "", y = "Seasonal ONI") +
   geom_hline(yintercept = 0) +
   scale_fill_distiller(palette = "Spectral") +
   scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
@@ -56,4 +58,7 @@ dfo_ts2 %>%
   theme(legend.position = "none", aspect.ratio = 0.3,
         panel.grid.major = element_line(linetype = 2, size = .4, color = "dark grey"),
         panel.grid.minor = element_line(linetype = 2, size = .4, color = "dark grey"))
+dfo_plot2
 
+dfo_plot <- dfo_plot1 + dfo_plot2 + plot_layout(ncol = 1)
+dfo_plot
