@@ -80,9 +80,9 @@ dfo$year <- as.character(dfo$year) # for joining dataframes later
 
 ## preparing dataframe for correlation test of ONI months with each snow measurement
 df_oni_long <- df_full %>%
-  select(ECOPROVINCE_CODE, grep("SCI_20", colnames(df_full)), grep("INT_20", colnames(df_full)),
+  select(z, ECOPROVINCE_CODE, grep("SCI_20", colnames(df_full)), grep("INT_20", colnames(df_full)),
          grep("INTs_20", colnames(df_full)), grep("INTe_20", colnames(df_full))) %>%
-  gather(key = measurements, value = value, -ECOPROVINCE_CODE) %>%
+  gather(key = measurements, value = value, -ECOPROVINCE_CODE, -z) %>%
   mutate(year = sub(".*_", "", measurements),
          measurements = sub("_.*", "", measurements)) %>%
   left_join(dfo) %>%
