@@ -67,10 +67,9 @@ dfo_plot
 reg_plot <- df_cal_long %>%
   mutate(year = as.numeric(year)) %>%
   ggplot(aes(year, doy)) + # raw doy data unprocessed
-  geom_point() +
   geom_smooth(method = "lm", colour = "#2b8cbe") +
   labs(x = "", y = "") + # showing doy for start and end but duration for INT and SCI
-  facet_wrap(.~variable) +
+  facet_wrap("variable", scales = "free_y") +
   theme_bw(base_size = 25) +
   theme(legend.position = "none", strip.background = element_rect(fill = "transparent", colour = "grey"),
         panel.grid.major = element_line(linetype = 2, size = .4, color = "dark grey"),
