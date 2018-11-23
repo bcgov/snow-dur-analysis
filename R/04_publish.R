@@ -137,8 +137,9 @@ ONI_map
 ## should not keep only unique records of correlation, even though every elevation has
 ## the same correlation?
 topo_plot <- df_oni %>%
-  ggplot(aes(cor, z, colour = season)) +
-  geom_smooth(method = "lm") +
+  ggplot(aes(cor_seasonal, mean_z, colour = season)) +
+  geom_point(aes(fill = season), color = "black", size = 3, shape = 21) +
+  geom_smooth(method = "lm", se = F) +
   labs(x = "Correlation", y = "Elevation (m)") +
   scale_color_brewer(palette = "Set1", name = "") +
   facet_wrap("measurements") +
@@ -146,7 +147,8 @@ topo_plot <- df_oni %>%
   theme(legend.key.size = unit(0.5, "cm"), plot.title = element_text(hjust = 0.5),
         strip.background = element_rect(fill = "transparent", colour = "grey"),
         panel.grid = element_line(colour = "transparent"), text = element_text(size = 20),
-        strip.text = element_text(size = 20), legend.text = element_text(size = 20))
+        strip.text = element_text(size = 20), legend.text = element_text(size = 20)) +
+  geom_vline(xintercept = 0)
 topo_plot
 
 ## figure 8 forest cover change plot
