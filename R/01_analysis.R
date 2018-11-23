@@ -22,7 +22,7 @@ library(sf) # geospatial data processing
 df_full <- read.csv("../data/snow/export_df.csv")
 
 ## removing NA Ecoprovince names
-df_full <- df_full[complete.cases(df_full$ECOPROVINCE_NAME), ]
+df_full <- df_full[complete.cases(df_full$HYDROLOGICZONE_NAME), ]
 
 ## reading in Oceanic Nino Index (ONI) data from 2002-2018 from
 ## http://origin.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php
@@ -41,13 +41,13 @@ df_hydro <- df_full %>%
   select(HYDROLOGICZONE_NAME, grep("SCI_20", colnames(df_full))) %>%
   gather(key = variable, value = value, -HYDROLOGICZONE_NAME) %>%
   group_by(HYDROLOGICZONE_NAME, variable) %>%
-  dplyr::summarise(SCI_avg = mean(value, na.rm = TRUE))
+  mutate(SCI_avg = mean(value, na.rm = TRUE))
 
 ## snow start-end calender dataframe
 df_cal_long <- df_full %>%
-  select(ID, ECOPROVINCE_CODE, grep("SCI_20", colnames(df_full)), grep("INT_20", colnames(df_full)),
+  select(ID, HYDROLOGICZONE_SP_ID, grep("SCI_20", colnames(df_full)), grep("INT_20", colnames(df_full)),
                       grep("INTs_20", colnames(df_full)), grep("INTe_20", colnames(df_full))) %>%
-  gather(key = variable, value = doy, -ID, -ECOPROVINCE_CODE) %>%
+  gather(key = variable, value = doy, -ID, -HYDROLOGICZONE_SP_ID) %>%
   mutate(year = sub(".*_", "", variable),
          variable = sub("_.*", "", variable),
          date = as.Date(doy, origin = paste0(year, '-09-13')),
@@ -81,11 +81,13 @@ dfo$year <- as.character(dfo$year) # for joining dataframes later
 
 ## preparing dataframe for correlation test of ONI months with each snow measurement
 df_oni_long <- df_full %>%
-  select(z, ECOPROVINCE_CODE, grep("SCI_20", colnames(df_full)), grep("INT_20", colnames(df_full)),
+  select(z, HYDROLOGICZONE_SP_ID, grep("SCI_20", colnames(df_full)), grep("INT_20", colnames(df_full)),
          grep("INTs_20", colnames(df_full)), grep("INTe_20", colnames(df_full))) %>%
-  gather(key = measurements, value = value, -ECOPROVINCE_CODE, -z) %>%
+  gather(key = measurements, value = value, -HYDROLOGICZONE_SP_ID, -z) %>%
+  group_by(HYDROLOGICZONE_SP_ID) %>%
   mutate(year = sub(".*_", "", measurements),
-         measurements = sub("_.*", "", measurements)) %>%
+         measurements = sub("_.*", "", measurements),
+         mean_z = mean(z)) %>%
   left_join(dfo) %>%
   gather(key = "month", value = "ONI", Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec) %>%
   mutate(season = case_when(month == "Dec" | month == "Jan" | month == "Feb" ~ "Winter",
@@ -99,13 +101,13 @@ df_oni_long$year <- as.Date(paste(df_oni_long$year, "-01-01", sep = ""), format 
 
 ## Pearson correlation test by each ecoprovince
 df_oni <- df_oni_long %>%
-  ddply(.(ECOPROVINCE_CODE, measurements, month), mutate,
+  ddply(.(HYDROLOGICZONE_SP_ID, measurements, month), mutate,
         "cor" = cor.test(value, ONI, method = "pearson")$estimate,
         "p_value" = cor.test(value, ONI, method = "pearson")$p.value) %>%
-  ddply(.(ECOPROVINCE_CODE, measurements, season), mutate,
+  ddply(.(HYDROLOGICZONE_SP_ID, measurements, season), mutate,
         "cor_seasonal" = cor.test(value, ONI, method = "pearson")$estimate,
         "p_value_seasonal" = cor.test(value, ONI, method = "pearson")$p.value) %>%
-  group_by(ECOPROVINCE_CODE, season, measurements) %>%
+  group_by(HYDROLOGICZONE_SP_ID, season, measurements) %>%
   mutate(cor_min = min(cor), cor_max = max(cor))
 
 ## keeping only unique correlation records
@@ -113,9 +115,9 @@ df_oni <- subset(df_oni, !duplicated(df_oni$cor))
 
 ## dot map showing sum of snow cover index
 df_dots <- df_full %>%
-  select(c(ECOSECTION_NAME, grep("SCI_20", colnames(df_full)))) %>%
-  gather(key = variable, value = value, -ECOSECTION_NAME) %>%
-  group_by(ECOSECTION_NAME, variable) %>%
+  select(c(HYDROLOGICZONE_SP_ID, grep("SCI_20", colnames(df_full)))) %>%
+  gather(key = variable, value = value, -HYDROLOGICZONE_SP_ID) %>%
+  group_by(HYDROLOGICZONE_SP_ID, variable) %>%
   dplyr::summarise(SCI_sum = sum(value, na.rm = TRUE))
 
 
@@ -142,7 +144,7 @@ df_dots <- df_dots %>%
   st_buffer(0) # multipolygon
 
 ## for ONI
-df_oni_prov <- left_join(ecoprov, df_oni, by = "ECOPROVINCE_CODE")
+df_oni_prov <- left_join(hydro, df_oni, by = "HYDROLOGICZONE_SP_ID")
 
 ## creating equal interval grids to combine with spatial dataframe
 ## dictates the density of dots, does not change grouped values
