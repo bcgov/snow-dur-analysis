@@ -98,18 +98,19 @@ df_oni_long$monyear <- as.Date(paste(df_oni_long$year, "-", df_oni_long$month, "
 df_oni_long$year <- as.Date(paste(df_oni_long$year, "-01-01", sep = ""), format = "%Y-%m-%d")
 
 ## Pearson correlation test by each ecoprovince
+## taking out monthly ONI correlation as the values do not represent 6 newly classified seasons
 df_oni <- df_oni_long %>%
-  ddply(.(HYDROLOGICZONE_SP_ID, measurements, month), mutate,
-        "cor" = cor.test(value, ONI, method = "pearson")$estimate,
-        "p_value" = cor.test(value, ONI, method = "pearson")$p.value) %>%
+  # ddply(.(HYDROLOGICZONE_SP_ID, measurements, month), mutate,
+  #       "cor" = cor.test(value, ONI, method = "pearson")$estimate,
+  #       "p_value" = cor.test(value, ONI, method = "pearson")$p.value) %>%
   ddply(.(HYDROLOGICZONE_SP_ID, measurements, season), mutate,
         "cor_seasonal" = cor.test(value, ONI, method = "pearson")$estimate,
         "p_value_seasonal" = cor.test(value, ONI, method = "pearson")$p.value) %>%
-  group_by(HYDROLOGICZONE_SP_ID, season, measurements) %>%
-  mutate(cor_min = min(cor), cor_max = max(cor))
+  group_by(HYDROLOGICZONE_SP_ID, season, measurements)
+  # %>% mutate(cor_min = min(cor), cor_max = max(cor))
 
 ## keeping only unique correlation records
-df_oni <- subset(df_oni, !duplicated(df_oni$cor))
+df_oni <- subset(df_oni, !duplicated(df_oni$cor_seasonal))
 
 ## dot map showing sum of snow cover index
 df_dots <- df_full %>%

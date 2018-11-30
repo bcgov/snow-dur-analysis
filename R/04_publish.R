@@ -81,7 +81,7 @@ SCI_map <- df_oni_prov %>%
   filter(measurements == "SCI") %>%
   rename("geometry" = "SHAPE") %>%
   ggplot() +
-  geom_sf(aes(fill = cor)) +
+  geom_sf(aes(fill = cor_seasonal)) +
   labs(title = "SCI") +
   scale_fill_viridis_c(name = "Cor") +
   facet_wrap("season") +
@@ -94,7 +94,7 @@ INT_map <- df_oni_prov %>%
   filter(measurements == "INT") %>%
   rename("geometry" = "SHAPE") %>%
   ggplot() +
-  geom_sf(aes(fill = cor)) +
+  geom_sf(aes(fill = cor_seasonal)) +
   labs(title = "INT") +
   scale_fill_viridis_c(name = "Cor") +
   facet_wrap("season") +
@@ -107,7 +107,7 @@ INTs_map <- df_oni_prov %>%
   filter(measurements == "INTs") %>%
   rename("geometry" = "SHAPE") %>%
   ggplot() +
-  geom_sf(aes(fill = cor)) +
+  geom_sf(aes(fill = cor_seasonal)) +
   labs(title = "INTs") +
   scale_fill_viridis_c(name = "Cor") +
   facet_wrap("season") +
@@ -120,7 +120,7 @@ INTe_map <- df_oni_prov %>%
   filter(measurements == "INTe") %>%
   rename("geometry" = "SHAPE") %>%
   ggplot() +
-  geom_sf(aes(fill = cor)) +
+  geom_sf(aes(fill = cor_seasonal)) +
   labs(title = "INTe") +
   scale_fill_viridis_c(name = "Cor") +
   facet_wrap("season") +
@@ -131,6 +131,7 @@ INTe_map <- df_oni_prov %>%
 
 ONI_map <- SCI_map + INT_map + INTs_map + INTe_map
 ONI_map
+
 
 ## figure 7 topo effects - snow measurements against elevation
 ## should not keep only unique records of correlation, even though every elevation has
@@ -180,7 +181,7 @@ png("../snow_docs/plots/F5_reg_plot.png", 700, 550, "px")
 reg_plot
 dev.off()
 
-png("../snow_docs/plots/F6_oni_map.png", 800, 600, "px")
+png("../snow_docs/plots/F6_oni_map.png", 1000, 600, "px")
 ONI_map
 dev.off()
 
