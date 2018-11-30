@@ -104,6 +104,9 @@ df_oni <- df_oni_long %>%
   #       "cor" = cor.test(value, ONI, method = "pearson")$estimate,
   #       "p_value" = cor.test(value, ONI, method = "pearson")$p.value) %>%
   ddply(.(HYDROLOGICZONE_SP_ID, measurements, season), mutate,
+        "cor_avg" = cor.test(value, mean_oni, method = "pearson")$estimate,
+        "p_value_avg" = cor.test(value, mean_oni, method = "pearson")$p.value) %>%
+  ddply(.(HYDROLOGICZONE_SP_ID, measurements, season), mutate,
         "cor_seasonal" = cor.test(value, ONI, method = "pearson")$estimate,
         "p_value_seasonal" = cor.test(value, ONI, method = "pearson")$p.value) %>%
   group_by(HYDROLOGICZONE_SP_ID, season, measurements)
