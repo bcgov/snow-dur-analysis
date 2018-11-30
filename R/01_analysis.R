@@ -72,12 +72,15 @@ colnames(dfo) <- c("year", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug
 ## taking out year 2018 data that's not a part of study period for time series plot
 dfo_ts <- dfo[-nrow(dfo), ]
 
-## replacing Jan - Jun ONI with consecutive year's data for complete hydrological year
-for (i in 1:(nrow(dfo)-1)) {
-  dfo[i, c("Jan", "Feb", "Mar", "Apr", "May", "Jun")] <- map(dfo[c("Jan", "Feb", "Mar", "Apr", "May", "Jun")], i + 1)
-}
-dfo <- dfo[-nrow(dfo), ]
-dfo$year <- as.character(dfo$year) # for joining dataframes later
+## joining with reference seasonal oni dataframe
+dfo_long <- dfo %>%
+  gather("months", "ONI", -year) %>%
+  rename("oni_year" = "year") %>%
+  right_join(ref_oni, by = c("oni_year", "months")) %>%
+  rename("season" = "oni_var",
+         "month" = "months")
+
+dfo_long$year <- as.character(dfo_long$year) # for joining dataframes later
 
 ## preparing dataframe for correlation test of ONI months with each snow measurement
 df_oni_long <- df_full %>%
@@ -88,12 +91,7 @@ df_oni_long <- df_full %>%
   mutate(year = sub(".*_", "", measurements),
          measurements = sub("_.*", "", measurements),
          mean_z = mean(z)) %>%
-  left_join(dfo) %>%
-  gather(key = "month", value = "ONI", Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec) %>%
-  mutate(season = case_when(month == "Dec" | month == "Jan" | month == "Feb" ~ "Winter",
-                       month == "Mar" | month == "Apr" | month == "May" ~ "Spring",
-                       month == "Jun" | month == "Jul" | month == "Aug" ~ "Summer",
-                       month == "Sep" | month == "Oct" | month == "Nov" ~ "Fall"))
+  left_join(dfo_long)
 
 ## formatting month-year and year columns as date class for ONI and SCI summaries
 df_oni_long$monyear <- as.Date(paste(df_oni_long$year, "-", df_oni_long$month, "-01", sep = ""), format = "%Y-%b-%d")
