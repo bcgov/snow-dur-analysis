@@ -28,6 +28,7 @@ df_full <- df_full[complete.cases(df_full$HYDROLOGICZONE_NAME), ]
 ## http://origin.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php
 ## column names indicate averaged results for three months
 dfo <- read.csv("../data/snow/original_ONI.csv")
+ref_oni <- read.csv("../data/snow/ref_ONI.csv")
 
 ## extracting relevant columns and calculating average snow cover index for each ecoprovinces
 df_prov <- df_full %>%
@@ -71,10 +72,9 @@ colnames(dfo) <- c("year", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug
 ## taking out year 2018 data that's not a part of study period for time series plot
 dfo_ts <- dfo[-nrow(dfo), ]
 
-## replacing Jan - May ONI with consecutive year's data (hydrological year Sept - Jun,
-## but summer season ends in May. Decision is made for complete seasonal summaries)
+## replacing Jan - Jun ONI with consecutive year's data for complete hydrological year
 for (i in 1:(nrow(dfo)-1)) {
-  dfo[i, c("Jan", "Feb", "Mar", "Apr", "May")] <- map(dfo[c("Jan", "Feb", "Mar", "Apr", "May")], i + 1)
+  dfo[i, c("Jan", "Feb", "Mar", "Apr", "May", "Jun")] <- map(dfo[c("Jan", "Feb", "Mar", "Apr", "May", "Jun")], i + 1)
 }
 dfo <- dfo[-nrow(dfo), ]
 dfo$year <- as.character(dfo$year) # for joining dataframes later
