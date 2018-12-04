@@ -86,7 +86,8 @@ SCI_map <- df_oni_prov %>%
   ggplot() +
   geom_sf(aes(fill = cor_seasonal_cat), colour = "grey70") +
   labs(title = "SCI") +
-  scale_fill_manual(values = cor_pal, name = "Cor") +
+  scale_fill_manual(values = cor_pal, name = "Cor",
+                    guide = guide_legend(override.aes = list(linetype = "blank"))) +
   facet_wrap("season") +
   theme_void() +
   theme(legend.key.size = unit(0.5, "cm"), plot.title = element_text(hjust = 0.5),
@@ -99,7 +100,8 @@ INT_map <- df_oni_prov %>%
   ggplot() +
   geom_sf(aes(fill = cor_seasonal_cat), colour = "grey70") +
   labs(title = "INT") +
-  scale_fill_manual(values = cor_pal, name = "Cor") +
+  scale_fill_manual(values = cor_pal, name = "Cor",
+                    guide = guide_legend(override.aes = list(linetype = "blank"))) +
   facet_wrap("season") +
   theme_void() +
   theme(legend.key.size = unit(0.5, "cm"), plot.title = element_text(hjust = 0.5),
@@ -112,7 +114,8 @@ INTs_map <- df_oni_prov %>%
   ggplot() +
   geom_sf(aes(fill = cor_seasonal_cat), colour = "grey30") +
   labs(title = "INTs") +
-  scale_fill_manual(values = cor_pal, name = "Cor") +
+  scale_fill_manual(values = cor_pal, name = "Cor",
+                    guide = guide_legend(override.aes = list(linetype = "blank"))) +
   facet_wrap("season") +
   theme_void() +
   theme(legend.key.size = unit(0.5, "cm"), plot.title = element_text(hjust = 0.5),
@@ -125,7 +128,8 @@ INTe_map <- df_oni_prov %>%
   ggplot() +
   geom_sf(aes(fill = cor_seasonal_cat), colour = "grey70") +
   labs(title = "INTe") +
-  scale_fill_manual(values = cor_pal, name = "Cor") +
+  scale_fill_manual(values = cor_pal, name = "Cor",
+                    guide = guide_legend(override.aes = list(linetype = "blank"))) +
   facet_wrap("season") +
   theme_void() +
   theme(legend.key.size = unit(0.5, "cm"), plot.title = element_text(hjust = 0.5),
@@ -167,8 +171,9 @@ tc_plot <- df_full %>%
   filter(complete.cases(tree_c)) %>%
   group_by(measurements, tree_c) %>%
   mutate(var = var(value, na.rm = TRUE)) %>%
+  filter(!duplicated(var)) %>%
   ggplot(aes(measurements, var, fill = tree_c)) +
-  geom_point(size = 6, shape = 21, alpha = 0.7) +
+  geom_jitter(size = 6, shape = 21, alpha = 0.9) +
   scale_fill_brewer(palette = "YlGn", name = "Forest Cover", direction = -1) +
   theme_bw(base_size = 25, base_family = "Calibri") +
   theme(panel.grid.major = element_line(linetype = 2, size = .4, color = "dark grey"),
@@ -194,6 +199,6 @@ png("../snow_docs/plots/F7_topo_plot.png", 700, 550, "px")
 topo_plot
 dev.off()
 
-png("../snow_docs/plots/F8_tc_plot.png", 800, 600, "px")
+png("../snow_docs/plots/F8_tc_plot2.png", 800, 600, "px")
 tc_plot
 dev.off()
