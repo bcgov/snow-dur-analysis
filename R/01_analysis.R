@@ -115,6 +115,11 @@ df_oni <- df_oni_long %>%
 ## keeping only unique correlation records
 df_oni <- subset(df_oni, !duplicated(df_oni$cor_seasonal))
 
+## sorting the correlation values and putting them in categories for graphing
+cor_lab <- c("=< -0.2", "-0.2 ~ -0.1", "-0.1 ~ 0", "0 ~ 0.1", "0.1 ~ 0.2")
+df_oni$cor_seasonal_cat <- cut(df_oni$cor_seasonal, breaks = c(-0.3, -0.2, -0.1, 0, 0.1, 0.2),
+                               labels = cor_lab)
+
 ## dot map showing sum of snow cover index
 df_dots <- df_full %>%
   select(c(HYDROLOGICZONE_SP_ID, grep("SCI_20", colnames(df_full)))) %>%

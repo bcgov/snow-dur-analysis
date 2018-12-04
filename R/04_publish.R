@@ -77,13 +77,16 @@ reg_plot <- df_cal_long %>%
 reg_plot
 
 ## figure 6 ONI correlation map
+cor_pal <- c("#440154FF", "#3B528BFF", "#21908CFF", "#5DC863FF", "#FDE725FF")
+names(cor_pal) <- cor_lab
+
 SCI_map <- df_oni_prov %>%
   filter(measurements == "SCI") %>%
   rename("geometry" = "SHAPE") %>%
   ggplot() +
-  geom_sf(aes(fill = cor_seasonal)) +
+  geom_sf(aes(fill = cor_seasonal_cat), colour = "grey70") +
   labs(title = "SCI") +
-  scale_fill_viridis_c(name = "Cor") +
+  scale_fill_manual(values = cor_pal, name = "Cor") +
   facet_wrap("season") +
   theme_void() +
   theme(legend.key.size = unit(0.5, "cm"), plot.title = element_text(hjust = 0.5),
@@ -94,9 +97,9 @@ INT_map <- df_oni_prov %>%
   filter(measurements == "INT") %>%
   rename("geometry" = "SHAPE") %>%
   ggplot() +
-  geom_sf(aes(fill = cor_seasonal)) +
+  geom_sf(aes(fill = cor_seasonal_cat), colour = "grey70") +
   labs(title = "INT") +
-  scale_fill_viridis_c(name = "Cor") +
+  scale_fill_manual(values = cor_pal, name = "Cor") +
   facet_wrap("season") +
   theme_void() +
   theme(legend.key.size = unit(0.5, "cm"), plot.title = element_text(hjust = 0.5),
@@ -107,9 +110,9 @@ INTs_map <- df_oni_prov %>%
   filter(measurements == "INTs") %>%
   rename("geometry" = "SHAPE") %>%
   ggplot() +
-  geom_sf(aes(fill = cor_seasonal)) +
+  geom_sf(aes(fill = cor_seasonal_cat), colour = "grey30") +
   labs(title = "INTs") +
-  scale_fill_viridis_c(name = "Cor") +
+  scale_fill_manual(values = cor_pal, name = "Cor") +
   facet_wrap("season") +
   theme_void() +
   theme(legend.key.size = unit(0.5, "cm"), plot.title = element_text(hjust = 0.5),
@@ -120,9 +123,9 @@ INTe_map <- df_oni_prov %>%
   filter(measurements == "INTe") %>%
   rename("geometry" = "SHAPE") %>%
   ggplot() +
-  geom_sf(aes(fill = cor_seasonal)) +
+  geom_sf(aes(fill = cor_seasonal_cat), colour = "grey70") +
   labs(title = "INTe") +
-  scale_fill_viridis_c(name = "Cor") +
+  scale_fill_manual(values = cor_pal, name = "Cor") +
   facet_wrap("season") +
   theme_void() +
   theme(legend.key.size = unit(0.5, "cm"), plot.title = element_text(hjust = 0.5),
