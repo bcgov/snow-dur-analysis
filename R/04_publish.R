@@ -165,8 +165,10 @@ tc_plot <- df_full %>%
                             TC2000 < 20 ~ "none"),
          tree_c = factor(as.factor(tree_c), c("stable", "loss", "none"))) %>%
   filter(complete.cases(tree_c)) %>%
-  ggplot(aes(measurements, value, fill = tree_c)) +
-  geom_boxplot() +
+  group_by(measurements, tree_c) %>%
+  mutate(var = var(value, na.rm = TRUE)) %>%
+  ggplot(aes(measurements, var, fill = tree_c)) +
+  geom_point(size = 6, shape = 21, alpha = 0.7) +
   scale_fill_brewer(palette = "YlGn", name = "Forest Cover", direction = -1) +
   theme_bw(base_size = 25, base_family = "Calibri") +
   theme(panel.grid.major = element_line(linetype = 2, size = .4, color = "dark grey"),
