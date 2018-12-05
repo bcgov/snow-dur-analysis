@@ -182,6 +182,23 @@ tc_plot <- df_full %>%
         legend.text = element_text(size = 20), legend.title = element_text(size = 20))
 tc_plot
 
+## ONI timeseries by year
+oni_plot <- dfo_ts %>%
+  gather(key = month, value = ONI, -year) %>%
+  filter(year != 2000 & year != 2001) %>%
+  mutate(monyear = as.Date(paste(2000, "-", month, "-01", sep = ""), format = "%Y-%b-%d"),
+         year = as.character(year)) %>%
+  ggplot(aes(monyear, ONI, colour = year)) +
+  geom_line(size = 1) +
+  scale_colour_manual(values = pal) +
+  scale_x_date(breaks = "1 month", date_labels = "%b") +
+  theme_bw(base_size = 20, base_family = "Calibri") +
+  theme(panel.grid.major = element_line(linetype = 2, size = .4, color = "dark grey"),
+        panel.grid.minor = element_line(linetype = 2, size = .4, color = "dark grey"),
+        aspect.ratio = 0.5)
+oni_plot
+
+
 ## graphic output
 png("../snow_docs/plots/F4_dfo_plot.png", 800, 550, "px")
 dfo_plot
@@ -199,6 +216,10 @@ png("../snow_docs/plots/F7_topo_plot.png", 700, 550, "px")
 topo_plot
 dev.off()
 
-png("../snow_docs/plots/F8_tc_plot2.png", 800, 600, "px")
+png("../snow_docs/plots/F8_tc_plot.png", 800, 600, "px")
 tc_plot
+dev.off()
+
+png("../snow_docs/plots/ONI_lineplot.png", 850, 650, "px")
+oni_plot
 dev.off()
