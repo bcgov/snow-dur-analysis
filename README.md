@@ -5,7 +5,7 @@ British Columbia Snow Duration Analysis
 
 ### Overview
 
-R code for snow duration analysis and visualisation research project in British Columbia for the past 16 years. Moderate Resolution Imaging Sectro-Radiometer (MODIS) snow cover data are obtained from Google Earth Engine and cleaned for R input.
+Series of code with the purpose of utilizing the Moderate Resolution Imaging Spectro-Radiometer (MODIS) M*D10A10 datasets for deriving snow duration metrics over BC during the period 2002 - Present. Additional analysis is carried out to explore the influence of major climate modes including the El Nino Southern Oscillation and the Pacific Decadal Oscillation on inter-annual snow cover variability.  
 
 ### Project Status
 
@@ -13,7 +13,7 @@ This project is under active development.
 
 ### Goals/Roadmap
 
-The goal is to explore linkages between variables (climatic, topographic) and the timing and duration of snow cover in British Columbia using remote sensing data at moderate resolution.
+The goal is to explore linkages between variables (climatic, topographic) and the timing / duration of snow cover over British Columbia using time series of satellite at moderate resolution. Additional products of this work include datasets of annual snow duration over the Province of BC over the period 2002 - 2018 and a number of scripts that can be used for related or unrelated satellite image time series analysis. 
 
 ### Getting Help or Reporting an Issue
 
