@@ -65,8 +65,9 @@
 
   # IMPORT ASWS / MODIS DIFFERENCE
 
-    asws = as_tibble(read.csv("Data/ASWS/OUT/ASWS_Error_bw2_thr30.csv"))
+    asws = as_tibble(read.csv("Data/ASWS/OUT/ASWS_Error_bw2_thr30.csv")) 
     names(asws) = c("Station","Year","SD[ON]","SD[OFF]","SD[DUR]")
+    asws = asws %>%  select(contains("SD"))
 
 #### 3: DEFINE FUNCTIONS ####
 
@@ -77,24 +78,32 @@
 
     lm_iter = function(raw_df, groups, Y, X, textName)
       {
-
+       
+      # raw_df = df_BC_year_mean
+      # groups = c("measurement","tel")
+      # Y = "days"
+      # X = "index"
+      # textName = "sup01_mod_lm_BC_year_mean"
+      
       # Run linear model on raw data
       lm_raw = raw_df %>%
         dplyr::group_by_(.dots = groups) %>%
         do(broom::tidy(lm(paste(Y,'~',X), data = ., na.action = na.omit))) %>%
         dplyr::filter(term != "(Intercept)")
-
+      
       # Loop the same model n times for error estimation
       for(i in 1:n_iterations)
       {
         # i = 1
-        # print(i)
+        print(i)
 
         # Randomply sample the difference csv
-        dif = asws[sample(nrow(asws),dim(raw_df %>% filter(measurement == "SD[ON]"))[1], replace = T),] %>% gather(measurement, asws_diff)
+        dif = asws[sample(x = nrow(asws),
+                          size = dim(raw_df %>% filter(measurement == "SD[ON]"))[1], 
+                          replace = T),] %>% gather(measurement, asws_diff)
+        
         # print(summary(dif))
         raw_df = raw_df %>% arrange(measurement)
-
         raw_df$asws_diff = dif$asws_diff
 
 
@@ -137,7 +146,8 @@
           -error_minus,
           -error_plus)
       # print(lm_summar)y
-      filename = paste("5_Draft/Figures/", textName, "_", zone_exp, "_", n, "_", n_iterations, "_", format(x = now(), format = "%Y%m%d%H%M%S"), "_", Y, "_", X,".csv", sep = "")
+      getwd()
+      filename = paste("Results/Tables/", textName, "_", zone_exp, "_", n, "_", n_iterations, "_", format(x = now(), format = "%Y%m%d%H%M%S"), "_", Y, "_", X,".csv", sep = "")
       # print(filename)
       write.csv(x = lm_summary, file = filename)
 
@@ -207,7 +217,7 @@
 
       # print(cor_summary)
 
-      filename = paste("5_Draft/Figures/", textName, "_", zone_exp, "_", n, "_", n_iterations, "_", format(x = now(), format = "%Y%m%d%H%M%S"), "_", Y, "_", X,".csv", sep = "")
+      filename = paste("Results/Tables/", textName, "_", zone_exp, "_", n, "_", n_iterations, "_", format(x = now(), format = "%Y%m%d%H%M%S"), "_", Y, "_", X,".csv", sep = "")
 
       write.csv(x = cor_summary, file = filename)
 

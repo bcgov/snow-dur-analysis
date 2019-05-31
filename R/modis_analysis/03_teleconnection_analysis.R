@@ -11,10 +11,9 @@
 # See the License for the specific language governing permissions and limitations under the License.
 
 #### 5. CALC BY BC == LM AND COR (TEL/MSM) ####
-n_iterations = 10
+n_iterations = 10000
 
 # ANNUAL ANALYSIS
-
 mod_lm_BC_year_mean  = lm_iter(df_BC_year_mean, groups = c("measurement","tel"), Y = "days", X = "index", textName = "sup01_mod_lm_BC_year_mean")
 mod_cor_BC_year_mean = cor_iter(df_BC_year_mean, groups = c("measurement","tel"), Y = "days", X = "index", textName = "sup02_mod_cor_BC_year_mean")
 

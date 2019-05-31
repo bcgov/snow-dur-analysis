@@ -17,43 +17,45 @@
 
 #### 2: CLEAN  ####
 
-  # Filter Elevation and Water Mask, Rename snow measurements, and group Z, asp, slp, and XY, also add unique ID
+  # Filter data
 
     df = dat %>%
-      dplyr::filter(elev > 0) %>%
-      dplyr::filter(!is.na(elev)) %>%
-      dplyr::filter(!is.na(water_mask_mode)) %>%
-      dplyr::filter(!is.na(aspect)) %>%
-      dplyr::filter(!is.na(slope)) %>%
-      dplyr::filter(!is.na(eastness)) %>%
-      dplyr::filter(!is.na(northness)) %>%
-      dplyr::filter(!is.na(lat)) %>%
-      dplyr::filter(!is.na(lon)) %>%
-      dplyr::filter(!is.na(water_mask_mode)) %>%
-      dplyr::filter(water_mask_mode == 0) %>%
-      dplyr::filter(obs > 0.3*max(obs)) %>%
-      dplyr::rename(SD_ON = start_day) %>% #int_start
-      dplyr::rename(SD_OFF = end_day) %>% #int_end
-      dplyr::rename(SD_INT = snow_dur) %>% #intp_dur
-      dplyr::filter(SD_ON != -9) %>% #intp_dur
-      dplyr::filter(SD_OFF != -9) %>% #intp_dur
-      dplyr::filter(SD_INT != -9) %>% #intp_dur
-      mutate(grZ   = as.numeric(as.character(cut(elev, seq(0, 5000, 500), labels = seq(0, 5000-500, 500)))),
-             grA   = as.numeric(as.character(cut(aspect, c(-1,45,90,135,180,225,270,315,361), labels = seq(0, 360-45, 45)))),
-             grS   = as.numeric(as.character(cut(slope, c(-1, 10,20,30,40,50,60), labels = seq(0, 60-10, 10)))),
-             grN   = as.numeric(as.character(cut(northness, seq(-1.4, 1.4, 0.4), labels = seq(-1, 1.4, 0.4)))),
-             grE   = as.numeric(as.character(cut(eastness, seq(-1.4, 1.4, 0.4), labels = seq(-1, 1.4, 0.4)))),
-             grLAT = as.numeric(as.character(cut(lat, seq(45, 62, 2), labels = seq(45, 62-2, 2)))),
-             grLON = as.numeric(as.character(cut(lon, seq(-150, -110, 5), labels = seq(-150, -110-5, 5)))),
-             UID   = round(abs((lat*1000) * (lon*1000)), digits = 3),
-             typeS = as.character(cut(SD_INT, c(0, 0.07*365, 0.30*365, 0.90*365, 365),
-                                      labels = c("nosnow","intermit","seasonal","permanent"))))
+      # dplyr::filter(z > 0) %>%
+      # dplyr::filter(!is.na(z)) %>%
+      # dplyr::filter(!is.na(water_mask_mode)) %>%
+      # dplyr::filter(!is.na(aspect)) %>%
+      # dplyr::filter(!is.na(slope)) %>%
+      # dplyr::filter(!is.na(eastness)) %>%
+      # dplyr::filter(!is.na(northness)) %>%
+      # dplyr::filter(!is.na(lat)) %>%
+      # dplyr::filter(!is.na(lon)) %>%
+      # dplyr::filter(!is.na(water_mask_mode)) %>%
+      # dplyr::filter(water_mask_mode == 0) %>%
+      # dplyr::filter(obs > 0.3*max(obs)) %>%
+      dplyr::rename(SD_ON = sdon) %>%
+      dplyr::rename(SD_OFF = sdoff) %>%
+      dplyr::rename(SD_DUR = sddur) %>%
+      dplyr::rename(SD_OBS = sdobs) %>%
+      dplyr::filter(SD_ON > -9) %>% 
+      dplyr::filter(SD_OFF > -9) %>%
+      dplyr::filter(SD_DUR > -9) %>%
+      dplyr::filter(SD_OBS > -9) %>% 
+      dplyr::filter(SD_OBS > 50) %>% 
+      mutate(grZ   = as.numeric(as.character(cut(z, seq(-1, 5000, 500), labels = seq(0, 5000-500, 500)))))
+      #        grA   = as.numeric(as.character(cut(aspect, c(-1,45,90,135,180,225,270,315,361), labels = seq(0, 360-45, 45)))),
+      #        grS   = as.numeric(as.character(cut(slope, c(-1, 10,20,30,40,50,60), labels = seq(0, 60-10, 10)))),
+      #        grN   = as.numeric(as.character(cut(northness, seq(-1.4, 1.4, 0.4), labels = seq(-1, 1.4, 0.4)))),
+      #        grE   = as.numeric(as.character(cut(eastness, seq(-1.4, 1.4, 0.4), labels = seq(-1, 1.4, 0.4)))),
+      #        grLAT = as.numeric(as.character(cut(lat, seq(45, 62, 2), labels = seq(45, 62-2, 2)))),
+      #        grLON = as.numeric(as.character(cut(lon, seq(-150, -110, 5), labels = seq(-150, -110-5, 5)))),
+      #        UID   = round(abs((lat*1000) * (lon*1000)), digits = 3),
+      #        typeS = as.character(cut(SD_INT, c(0, 0.07*365, 0.30*365, 0.90*365, 365),
+      #                                 labels = c("nosnow","intermit","seasonal","permanent"))))
 
   # write.csv(df, paste(getwd(),"/5_Draft/Figures/", "dat01_df","_", format(x = now(), format = "%Y%m%d%H%M%S.csv"), sep = ""))
-
-
+    # hist(df$SD_OBS)
     summary(df)
-    unique(df$grS)
+    
   # Optional code to change SD_ON and SD_OFF from "days since 1-Sep to Julian days
     # SD_ON  = as.numeric(format(as.Date(paste(year, "-09-01", sep = ""))+SD_ON, "%j")),
     # SD_OFF = as.numeric(format(as.Date(paste(year, "-09-01", sep = ""))+SD_OFF, "%j")))
@@ -83,13 +85,13 @@
   # Transform zones
     zones_alb  = transform_bc_albers(as(zones, "Spatial"))
 
-  # Extract EcoregionCode by point
+  # Extract Hydrozone code by point
     zones_sel <- over(spdf, zones_alb[,zone_name])
 
   # flip back to DF
     df = as.data.frame(spdf)
     df = cbind(df, zones_sel)
-    df = df %>% dplyr::filter(!is.na(zone_name))
+    df = df %>% dplyr::filter(!is.na(HYDROLOGICZONE_NAME)) 
 
   # CLEAN ENVIRONMENT
     remove(zones_sel, spdf, zones_alb, bc)
@@ -101,7 +103,7 @@
     tel_name = c("ONI","PDO") #,"ONI+PDO") #,"ONIe","PDOe","ONIe+PDOe","ONIe+PDOe_b")
 
   # Conversions
-    msm_list = c("SD_ON","SD_OFF","SD_INT")#,"SD_SCI")
+    msm_list = c("SD_ON","SD_OFF","SD_DUR")#,"SD_SCI")
     msm_name = c("SD[ON]","SD[OFF]","SD[DUR]")#,"SD[SCI]")
 
   # Mean TEL by year
@@ -131,7 +133,7 @@
       dplyr::summarise(
         SD_ON     = mean(SD_ON, na.rm = T),
         SD_OFF    = mean(SD_OFF, na.rm = T),
-        SD_INT    = mean(SD_INT, na.rm = T))
+        SD_DUR    = mean(SD_DUR, na.rm = T))
 
   # Summarise by zone and elevation
     df_zoneZ = df %>%
@@ -139,7 +141,7 @@
       dplyr::summarise(
         SD_ON     = mean(SD_ON, na.rm = T),
         SD_OFF    = mean(SD_OFF, na.rm = T),
-        SD_INT    = mean(SD_INT, na.rm = T))
+        SD_DUR    = mean(SD_DUR, na.rm = T))
 
     # MERGE tel - AND - dfM - BY - year
     tel_by_year_all   = merge(df, tel_by_year, by="year")

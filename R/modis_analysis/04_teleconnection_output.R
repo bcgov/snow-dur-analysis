@@ -12,9 +12,9 @@
 
 # PLOT ASWS STATION VS MODIS ERROR
 
-asws = read.csv("G:/Dropbox/FLNRO_p1/Research_Cryosphere/Project_Snow/Paper_2018_snow_modis/corr_err_dist_bw2_s15_e10.csv")
+# asws = read.csv("G:/Dropbox/FLNRO_p1/Research_Cryosphere/Project_Snow/Paper_2018_snow_modis/corr_err_dist_bw2_s15_e10.csv")
 asws.m= gather(asws,"measurement","value")
-asws.m$measurement = ordered(asws.m$measurement, levels = c("start_corr","end_corr","dur_corr"), labels = msm_name)
+asws.m$measurement = ordered(asws.m$measurement, levels = c("SD[ON]","SD[OFF]","SD[DUR]"), labels = msm_name)
 
 asws.m %>% group_by(measurement) %>% summarize_all(mean)
 
@@ -28,13 +28,13 @@ ggplot(asws.m, aes(value)) +
   scale_x_continuous(breaks = seq(-100,100,20)) +
   labs(x = "MODIS - ASWS Difference (days)", y = "Density")
 
-ggsave(filename = paste(getwd(),"/5_Draft/Figures/", "fig05_error_", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.pdf"), sep = ""), height = 8, device = "pdf")
+ggsave(filename = paste(getwd(),"/Results/Figures/", "fig05_error_", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.pdf"), sep = ""), height = 8, device = "pdf")
 
 #### FIGURE 7 ####
 
 # PLOT LM COEFFICIENTS
 
-mod_lm_BC_seas_mean = read.csv("G:/Dropbox/FLNRO_p1/Research_Cryosphere/Project_Snow/Paper_2018_snow_modis/5_Draft/Figures/sup03_mod_lm_BC_seas_mean_HZ_820430_10000_820430_10000_20190221091049_days_index.csv")
+# mod_lm_BC_seas_mean = read.csv("G:/Dropbox/FLNRO_p1/Research_Cryosphere/Project_Snow/Paper_2018_snow_modis/Results/Figures/sup03_mod_lm_BC_seas_mean_HZ_820430_10000_820430_10000_20190221091049_days_index.csv")
 mod_lm_BC_seas_mean$measurement = ordered(mod_lm_BC_seas_mean$measurement, levels = msm_name, labels = msm_name)
 
 lm = ggplot(mod_lm_BC_seas_mean, aes(group = season)) +
@@ -53,7 +53,7 @@ lm = ggplot(mod_lm_BC_seas_mean, aes(group = season)) +
 
 # PLOT COR COEFFICIENTS
 
-mod_cor_BC_seas_mean = read.csv("G:/Dropbox/FLNRO_p1/Research_Cryosphere/Project_Snow/Paper_2018_snow_modis/5_Draft/Figures/sup04_mod_cor_BC_seas_mean_HZ_820430_10000_820430_10000_20190221091708_days_index.csv")
+# mod_cor_BC_seas_mean = read.csv("G:/Dropbox/FLNRO_p1/Research_Cryosphere/Project_Snow/Paper_2018_snow_modis/Results/Figures/sup04_mod_cor_BC_seas_mean_HZ_820430_10000_820430_10000_20190221091708_days_index.csv")
 mod_cor_BC_seas_mean$measurement = ordered(mod_cor_BC_seas_mean$measurement, levels = msm_name, labels = msm_name)
 
 cor = ggplot(mod_cor_BC_seas_mean, aes(group = season)) +
@@ -73,14 +73,14 @@ cor = ggplot(mod_cor_BC_seas_mean, aes(group = season)) +
 # SAVE FIG 7
 
 both = gridExtra::grid.arrange(lm,cor,ncol=2)
-ggsave(plot = both, filename = paste(getwd(),"/5_Draft/Figures/", "fig07_mod_cor+lm_BC_seas_mean_", zone_exp, "_", format(x = now(), format = "%Y%m%d%H%M%S.pdf"), sep = ""), width = 20, height = 10, device = "pdf")
+ggsave(plot = both, filename = paste(getwd(),"/Results/Figures/", "fig07_mod_cor+lm_BC_seas_mean_", zone_exp, "_", format(x = now(), format = "%Y%m%d%H%M%S.pdf"), sep = ""), width = 20, height = 10, device = "pdf")
 
 
 #### FIGURE 8 #####
 
 # PLOT LM COEFFICIENTS
 
-mod_lm_zone_seas_mean = read.csv("G:/Dropbox/FLNRO_p1/Research_Cryosphere/Project_Snow/Paper_2018_snow_modis/5_Draft/Figures/sup07_mod_lm_zone_seas_mean_HZ_820430_10000_820430_10000_20190221204151_days_index.csv")
+# mod_lm_zone_seas_mean = read.csv("G:/Dropbox/FLNRO_p1/Research_Cryosphere/Project_Snow/Paper_2018_snow_modis/Results/Figures/sup07_mod_lm_zone_seas_mean_HZ_820430_10000_820430_10000_20190221204151_days_index.csv")
 mod_lm_zone_seas_mean$measurement = ordered(mod_lm_zone_seas_mean$measurement, levels = msm_name, labels = msm_name)
 
 lm = zone_plot(mod_lm_zone_seas_mean, -30,30,5) +
@@ -89,7 +89,7 @@ lm = zone_plot(mod_lm_zone_seas_mean, -30,30,5) +
 
 # PLOT COR COEFFICIENTS
 
-mod_cor_zone_seas_mean = read.csv("G:/Dropbox/FLNRO_p1/Research_Cryosphere/Project_Snow/Paper_2018_snow_modis/5_Draft/Figures/sup08_mod_cor_zone_seas_mean_HZ_820430_10000_820430_10000_20190221215418_days_index.csv")
+# mod_cor_zone_seas_mean = read.csv("G:/Dropbox/FLNRO_p1/Research_Cryosphere/Project_Snow/Paper_2018_snow_modis/Results/Figures/sup08_mod_cor_zone_seas_mean_HZ_820430_10000_820430_10000_20190221215418_days_index.csv")
 mod_cor_zone_seas_mean$measurement = ordered(mod_cor_zone_seas_mean$measurement, levels = msm_name, labels = msm_name)
 
 cor = zone_plot(mod_cor_zone_seas_mean, -1,1,0.2) +
@@ -99,12 +99,12 @@ cor = zone_plot(mod_cor_zone_seas_mean, -1,1,0.2) +
 # SAVE FIG 8
 
 both = gridExtra::grid.arrange(lm,cor,ncol=2)
-ggsave(plot = both, filename = paste(getwd(),"/5_Draft/Figures/", "fig08_mod_cor+lm_zone_seas_mean_", zone_exp, "_", format(x = now(), format = "%Y%m%d%H%M%S.pdf"), sep = ""), width = 15, height = 18, device = "pdf")
+ggsave(plot = both, filename = paste(getwd(),"/Results/Figures/", "fig08_mod_cor+lm_zone_seas_mean_", zone_exp, "_", format(x = now(), format = "%Y%m%d%H%M%S.pdf"), sep = ""), width = 15, height = 18, device = "pdf")
 
 
 #### FIGURE 10 ####
 
-mod_cor_zone_year_mean = read.csv("G:/Dropbox/FLNRO_p1/Research_Cryosphere/Project_Snow/Paper_2018_snow_modis/5_Draft/Figures/sup06_mod_cor_zone_year_mean_HZ_820430_10000_820430_10000_20190221112004_days_index.csv")
+# mod_cor_zone_year_mean = read.csv("G:/Dropbox/FLNRO_p1/Research_Cryosphere/Project_Snow/Paper_2018_snow_modis/Results/Figures/sup06_mod_cor_zone_year_mean_HZ_820430_10000_820430_10000_20190221112004_days_index.csv")
 mod_cor_zone_year_mean$measurement = ordered(mod_cor_zone_year_mean$measurement, levels = msm_name, labels = msm_name)
 
 most_imp_year_cor = mod_cor_zone_year_mean %>%
@@ -122,11 +122,11 @@ ggplot() +
   theme(legend.position="bottom", axis.text = element_blank(), axis.title = element_blank(), axis.ticks = element_blank(), aspect.ratio = 1, panel.grid = element_line(linetype = 3, color = "light gray")) +
   labs(fill = "", title = "most_imp_year_cor")
 
-ggsave(filename = paste(getwd(),"/5_Draft/Figures/", "fig10_most_imp_year_cor_", zone_exp, "_", format(x = now(), format = "%Y%m%d%H%M%S.pdf"), sep = ""), width = 10, height = 12, device = "pdf")
+ggsave(filename = paste(getwd(),"/Results/Figures/", "fig10_most_imp_year_cor_", zone_exp, "_", format(x = now(), format = "%Y%m%d%H%M%S.pdf"), sep = ""), width = 10, height = 12, device = "pdf")
 
 #### FIGURE 9 ####
 
-mod_cor_zone_seas_mean = read.csv("G:/Dropbox/FLNRO_p1/Research_Cryosphere/Project_Snow/Paper_2018_snow_modis/5_Draft/Figures/sup08_mod_cor_zone_seas_mean_HZ_820430_10000_820430_10000_20190221215418_days_index.csv")
+# mod_cor_zone_seas_mean = read.csv("G:/Dropbox/FLNRO_p1/Research_Cryosphere/Project_Snow/Paper_2018_snow_modis/Results/Figures/sup08_mod_cor_zone_seas_mean_HZ_820430_10000_820430_10000_20190221215418_days_index.csv")
 mod_cor_zone_seas_mean$measurement = ordered(mod_cor_zone_seas_mean$measurement, levels = msm_name, labels = msm_name)
 mod_cor_zone_seas_mean$season = ordered(mod_cor_zone_seas_mean$season, levels = c("Spring","Summer","Fall","Winter"), labels = c("Spring","Summer","Fall","Winter"))
 
@@ -145,7 +145,7 @@ ggplot() +
   theme(legend.position="bottom", axis.text = element_blank(), axis.title = element_blank(), axis.ticks = element_blank(), aspect.ratio = 1, panel.grid = element_line(linetype = 3, color = "light gray")) +
   labs(fill = "", title = "most_imp_seas_cor")
 
-ggsave(filename = paste(getwd(),"/5_Draft/Figures/", "fig09_most_imp_seas_cor_", zone_exp, "_", format(x = now(), format = "%Y%m%d%H%M%S.pdf"), sep = ""), width = 10, height = 12, device = "pdf")
+ggsave(filename = paste(getwd(),"/Results/Figures/", "fig09_most_imp_seas_cor_", zone_exp, "_", format(x = now(), format = "%Y%m%d%H%M%S.pdf"), sep = ""), width = 10, height = 12, device = "pdf")
 
 
 #### Figure 11 ####
@@ -194,9 +194,9 @@ both = grid.arrange(
     stat_summary(aes(group = tel), fun.data = give.cor, geom = "text", position = position_dodge(width = 1), size=3,  family="sans"),
   ncol = 1)
 
-ggsave(plot = both, filename = paste(getwd(),"/5_Draft/Figures/", "fig11_boxplot_grZ_", zone_exp, "_", format(x = now(), format = "%Y%m%d%H%M%S.pdf"), sep = ""), width = 10, height = 10, device = "pdf")
+ggsave(plot = both, filename = paste(getwd(),"/Results/Figures/", "fig11_boxplot_grZ_", zone_exp, "_", format(x = now(), format = "%Y%m%d%H%M%S.pdf"), sep = ""), width = 10, height = 10, device = "pdf")
 
 
-write.csv(year_grZ_lm %>% filter(p.value <= 0.05), paste(getwd(),"/5_Draft/Figures/", "sup19_year_grZ_lm", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.csv"), sep = ""))
-write.csv(year_grZ_cor %>% filter(p.value <= 0.05), paste(getwd(),"/5_Draft/Figures/", "sup20_year_grZ_cor", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.csv"), sep = ""))
+write.csv(year_grZ_lm %>% filter(p.value <= 0.05), paste(getwd(),"/Results/Figures/", "sup19_year_grZ_lm", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.csv"), sep = ""))
+write.csv(year_grZ_cor %>% filter(p.value <= 0.05), paste(getwd(),"/Results/Figures/", "sup20_year_grZ_cor", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.csv"), sep = ""))
 
