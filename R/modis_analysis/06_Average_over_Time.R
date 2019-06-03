@@ -38,17 +38,17 @@ zones= c("ALL BC",
       dplyr::summarise(
         SD_ON     = mean(SD_ON, na.rm = T),
         SD_OFF    = mean(SD_OFF, na.rm = T),
-        SD_INT    = mean(SD_INT, na.rm = T))
+        SD_DUR    = mean(SD_DUR, na.rm = T))
 
   ts_dev.mean = df_hz %>% ungroup() %>%
     group_by(HYDROLOGICZONE_NAME) %>%
     filter(!is.na(HYDROLOGICZONE_NAME)) %>%
     mutate(mSD_ON = mean(SD_ON)) %>%
     mutate(mSD_OFF = mean(SD_OFF)) %>%
-    mutate(mSD_INT = mean(SD_INT)) %>%
+    mutate(mSD_DUR = mean(SD_DUR)) %>%
     mutate(difON = SD_ON - mSD_ON) %>%
     mutate(difOFF = SD_OFF - mSD_OFF) %>%
-    mutate(difINT = SD_INT - mSD_INT)
+    mutate(difDUR = SD_DUR - mSD_DUR)
 
 # ALL BC
   BC_ts_dev.mean =  df %>%
@@ -56,13 +56,13 @@ zones= c("ALL BC",
     dplyr::summarise(
       SD_ON     = mean(SD_ON, na.rm = T),
       SD_OFF    = mean(SD_OFF, na.rm = T),
-      SD_INT    = mean(SD_INT, na.rm = T)) %>%
+      SD_DUR    = mean(SD_DUR, na.rm = T)) %>%
     mutate(mSD_ON = mean(SD_ON)) %>%
     mutate(mSD_OFF = mean(SD_OFF)) %>%
-    mutate(mSD_INT = mean(SD_INT)) %>%
+    mutate(mSD_DUR = mean(SD_DUR)) %>%
     mutate(difON = SD_ON - mSD_ON) %>%
     mutate(difOFF = SD_OFF - mSD_OFF) %>%
-    mutate(difINT = SD_INT - mSD_INT) %>%
+    mutate(difDUR = SD_DUR - mSD_DUR) %>%
     mutate(HYDROLOGICZONE_NAME = "ALL BC") %>%
     select(HYDROLOGICZONE_NAME, everything())
 
@@ -71,8 +71,8 @@ zones= c("ALL BC",
   bind.m = bind %>% gather("measurement", "value", contains("dif"))
   bind.m = bind.m %>% gather("mean_msm", "mean_value", contains("mS"))
 
-  bind.m$measurement = ordered(bind.m$measurement, levels = c("difON","difOFF","difINT"), labels = msm_name)
-  bind.m$mean_msm = ordered(bind.m$mean_msm, levels = c("mSD_ON","mSD_OFF","mSD_INT"), labels = msm_name)
+  bind.m$measurement = ordered(bind.m$measurement, levels = c("difON","difOFF","difDUR"), labels = msm_name)
+  bind.m$mean_msm = ordered(bind.m$mean_msm, levels = c("mSD_ON","mSD_OFF","mSD_DUR"), labels = msm_name)
   bind.m$HYDROLOGICZONE_NAME = ordered(factor(bind.m$HYDROLOGICZONE_NAME), levels = ordered(zones))
 
   bind.m.mean = bind.m %>% group_by(HYDROLOGICZONE_NAME, mean_msm) %>%
@@ -98,8 +98,8 @@ ggplot(bind.m, aes(year, factor(HYDROLOGICZONE_NAME, levels = zones))) +
   # geom_text(data = stats, aes(group = HYDROLOGICZONE_NAME, x = 2021, y = factor(HYDROLOGICZONE_NAME), label = paste0("n=",round(count/1000)))) +
 
   scale_fill_gradientn(colors= c("black","darkred","white","dodgerblue4","dodgerblue")) + #, values=rescale(c(min(ts_dev.mean.m$x),0,max(data$x))), limits=c(min(data$x),max(data$x)), breaks = seq(minLab,maxLab,intLab)) +
-  scale_color_gradientn(colors= c("dodgerblue","dodgerblue4","black","darkred","black")) + #, values=rescale(c(min(ts_dev.mean.m$x),0,max(data$x))), limits=c(min(data$x),max(data$x)), breaks = seq(minLab,maxLab,intLab)) +  scale_x_continuous(breaks = seq(2000,2020,2)) +
-  scale_x_continuous(breaks = c(2005,2010,2015), labels = c("2005-06","2010-11","2015-16")) +
+  scale_color_gradientn(colors= c("white","white","dodgerblue","darkred","black","black")) + #"dodgerblue","dodgerblue4","black","darkred","black")) + #, values=rescale(c(min(ts_dev.mean.m$x),0,max(data$x))), limits=c(min(data$x),max(data$x)), breaks = seq(minLab,maxLab,intLab)) +  scale_x_continuous(breaks = seq(2000,2020,2)) +
+  scale_x_continuous(breaks = seq(2002,2020,5), labels = c("2002-03","2007-08","2012-13","2017-18")) +
 
   guides(fill = guide_colourbar(barwidth = 20, barheight = 1, direction = "horizontal", title.position = "top", frame.colour = "black", ticks.colour = "black")) +
   labs(fill = "Difference from the mean (days)", x = "Hydrological Year") +
@@ -110,6 +110,6 @@ ggplot(bind.m, aes(year, factor(HYDROLOGICZONE_NAME, levels = zones))) +
   theme(aspect.ratio = 0.8, legend.position = "bottom", legend.title.align = 0.5, axis.title.y = element_blank(), plot.margin=grid::unit(c(0,0,0,0), "mm"))
 
 
-ggsave(filename = paste(getwd(),"/5_Draft/Figures/", "fig06_snowseason_", zone_exp, "_", format(x = now(), format = "%Y%m%d%H%M%S.pdf"), sep = ""), width = 18, height = 18, device = "pdf")
+ggsave(filename = paste(getwd(),"/Results/Figures/", "fig06_snowseason_", zone_exp, "_", format(x = now(), format = "%Y%m%d%H%M%S.pdf"), sep = ""), width = 10, height = 18, device = "pdf")
 
 

@@ -56,7 +56,7 @@
     # hist(df$SD_OBS)
     summary(df)
     
-  # Optional code to change SD_ON and SD_OFF from "days since 1-Sep to Julian days
+  # Optional code to change SD_ON and SD_OFF from "days since 1-Sep to Julian days
     # SD_ON  = as.numeric(format(as.Date(paste(year, "-09-01", sep = ""))+SD_ON, "%j")),
     # SD_OFF = as.numeric(format(as.Date(paste(year, "-09-01", sep = ""))+SD_OFF, "%j")))
 

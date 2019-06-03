@@ -17,10 +17,11 @@
     rm(list=ls(all=TRUE))
 
   # SET WD LAPTOP vs WORK MACHINE
-    setwd("G:/Dropbox/FLNRO_p1/Research_Cryosphere/Project_Snow/Git_Snow_MODIS/")
-    list.dirs(recursive = F)
-
-    #### 1: LOAD LIBRARIES ####
+    # setwd("G:/Dropbox/FLNRO_p1/Research_Cryosphere/Project_Snow/Git_Snow_MODIS/")
+    # setwd("C:/Users/bevington/Dropbox/Git_Snow_MODIS_copy/")
+    setwd("C:/Users/bevington/Dropbox/FLNRO_p1/Research_Cryosphere/Project_Snow/Git_Snow_MODIS_copy")
+  
+#### 1: LOAD LIBRARIES ####
 
     library(reshape2)
     library(broom)
@@ -35,7 +36,7 @@
     library(cowplot)
     library(scales)
 
-    #### 2: IMPORT  ####
+#### 2: IMPORT  ####
 
   # IMPORT TERRAIN per point
 

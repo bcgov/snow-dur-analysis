@@ -10,15 +10,26 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
-# files = list.files("G:/Dropbox/FLNRO_p1/Research_Cryosphere/Project_Snow/Paper_2018_snow_modis/5_Draft/Figures", pattern = "csv")
+# files = list.files("G:/Dropbox/FLNRO_p1/Research_Cryosphere/Project_Snow/Paper_2018_snow_modis/Results/Tables", pattern = "csv")
 # for(file in files){print(file)
 #   out = paste(strsplit(file,"_")[[1]][1],strsplit(file,"_")[[1]][2],strsplit(file,"_")[[1]][3],strsplit(file,"_")[[1]][4],strsplit(file,"_")[[1]][5], sep = "_")
-#   assign(out, read.csv(paste0("G:/Dropbox/FLNRO_p1/Research_Cryosphere/Project_Snow/Paper_2018_snow_modis/5_Draft/Figures/",file)))}
+#   assign(out, read.csv(paste0("G:/Dropbox/FLNRO_p1/Research_Cryosphere/Project_Snow/Paper_2018_snow_modis/Results/Tables/",file)))}
 
 # Function to test time series, and adjusted annual and seasonal time series
 
+mod_lm_zone_year_mean = read.csv(list.files(path = "Results/Tables", pattern = "sup05", full.names = T))
+mod_lm_zone_year_mean$measurement = ordered(mod_lm_zone_year_mean$measurement, levels = msm_name, labels = msm_name)
 
-adjuster = function(raw_df, raw_lm, groups) {
+
+mod_lm_zoneZ_year_mean = read.csv(list.files(path = "Results/Tables", pattern = "sup09", full.names = T))
+mod_lm_zoneZ_year_mean$measurement = ordered(mod_lm_zoneZ_year_mean$measurement, levels = msm_name, labels = msm_name)
+
+mod_lm_zoneZ_seas_mean = read.csv(list.files(path = "Results/Tables", pattern = "sup11", full.names = T))
+mod_lm_zoneZ_seas_mean$measurement = ordered(mod_lm_zoneZ_seas_mean$measurement, levels = msm_name, labels = msm_name)
+mod_lm_zoneZ_seas_mean$season = ordered(mod_lm_zoneZ_seas_mean$season, levels = season_name, labels = season_name)
+
+
+ = function(raw_df, raw_lm, groups) {
 
   # raw_df = df_zone_year_mean
   # raw_lm = mod_lm_zone_year_mean %>% select(-year, -days, -index) %>% filter(!is.na(HYDROLOGICZONE_NAME))
@@ -59,36 +70,40 @@ give.n <- function(x){
 
 # Linear model for RAW and ADJUSTED data
 
+
+  mod_lm_BC_year_mean = read.csv(list.files(path = "Results/Tables", pattern = "sup01", full.names = T))
+  mod_lm_BC_year_mean$measurement = ordered(mod_lm_BC_year_mean$measurement, levels = msm_name, labels = msm_name)
+  
   # All BC annual
   ts_BC_year = adjuster(raw_df = df_BC_year_mean,
                         raw_lm = mod_lm_BC_year_mean,
                         groups = c("measurement"))
-                        write.csv(ts_BC_year, paste(getwd(),"/5_Draft/Figures/", "sup13_ts_BC_year", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.csv"), sep = ""))
+                        # write.csv(ts_BC_year, paste(getwd(),"/Results/Tables/", "sup13_ts_BC_year", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.csv"), sep = ""))
   # All BC seasonal
   ts_BC_seas = adjuster(raw_df = df_BC_seas_mean,
                         raw_lm = mod_lm_BC_seas_mean,
                         groups = c("measurement","season"))
-                        write.csv(ts_BC_seas, paste(getwd(),"/5_Draft/Figures/", "sup14_ts_BC_seas", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.csv"), sep = ""))
+                        # write.csv(ts_BC_seas, paste(getwd(),"/Results/Tables/", "sup14_ts_BC_seas", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.csv"), sep = ""))
   # Hydrozones annual
   ts_HZ_year = adjuster(raw_df = df_zone_year_mean %>% filter(!is.na(HYDROLOGICZONE_NAME)),
                         raw_lm = mod_lm_zone_year_mean %>% filter(!is.na(HYDROLOGICZONE_NAME)),
                         groups = c(zone_name,"measurement"))
-                        write.csv(ts_HZ_year, paste(getwd(),"/5_Draft/Figures/", "sup15_ts_HZ_year", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.csv"), sep = ""))
+                        # write.csv(ts_HZ_year, paste(getwd(),"/Results/Tables/", "sup15_ts_HZ_year", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.csv"), sep = ""))
   # Hydrozones seasonal
   ts_HZ_seas = adjuster(raw_df = df_zone_seas_mean %>% filter(!is.na(HYDROLOGICZONE_NAME)),
                         raw_lm = mod_lm_zone_seas_mean %>% filter(!is.na(HYDROLOGICZONE_NAME)),
                         groups = c(zone_name,"measurement","season"))
-                        write.csv(ts_HZ_seas, paste(getwd(),"/5_Draft/Figures/", "sup16_ts_HZ_seas", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.csv"), sep = ""))
+                        # write.csv(ts_HZ_seas, paste(getwd(),"/Results/Tables/", "sup16_ts_HZ_seas", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.csv"), sep = ""))
   # Hydrozones / elevation annual
   ts_HZgrZ_year = adjuster(raw_df = df_zoneZ_year_mean %>% filter(!is.na(HYDROLOGICZONE_NAME)),
                            raw_lm = mod_lm_zoneZ_year_mean %>% filter(!is.na(HYDROLOGICZONE_NAME)),
                            groups = c(zone_name,"grZ","measurement"))
-                           write.csv(ts_HZgrZ_year, paste(getwd(),"/5_Draft/Figures/", "sup17_ts_HZgrZ_year", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.csv"), sep = ""))
+                           # write.csv(ts_HZgrZ_year, paste(getwd(),"/Results/Tables/", "sup17_ts_HZgrZ_year", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.csv"), sep = ""))
   # Hydrozones / elevation seasonal
   ts_HZgrZ_seas = adjuster(raw_df = df_zoneZ_seas_mean %>% filter(!is.na(HYDROLOGICZONE_NAME)),
-                           raw_lm = mod_lm_zoneZ_seas_mean %>% dplyr::select(-year, -days, -index) %>% filter(!is.na(HYDROLOGICZONE_NAME)),
+                           raw_lm = mod_lm_zoneZ_seas_mean %>% filter(!is.na(HYDROLOGICZONE_NAME)),
                            groups = c(zone_name,"grZ","measurement","season"))
-                           write.csv(ts_HZgrZ_seas, paste(getwd(),"/5_Draft/Figures/", "sup18_ts_HZgrZ_seas", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.csv"), sep = ""))
+                           # write.csv(ts_HZgrZ_seas, paste(getwd(),"/Results/Tables/", "sup18_ts_HZgrZ_seas", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.csv"), sep = ""))
 
 # Plotting
 
@@ -96,28 +111,28 @@ give.n <- function(x){
   # PLOT RAW DATA
   zone_plot(ts_HZ_year %>% filter(tel == "RAW"), -2,2,0.5) +
     facet_grid(~measurement, labeller = labeller(measurement = label_parsed))   +
-    labs(title = "ts_HZ_seas_raw", x = "", y = "", fill = expression(paste("LLS (d ?",yr^-1,")", sep = "")))
+    labs(title = "ts_HZ_seas_raw", x = "", y = "", fill = expression(paste("LLS (d °",yr^-1,")", sep = "")))
 
   # PLOT CORRECTED ANNUAL HYDROZONE
   zone_plot(ts_HZ_year %>% filter(tel != "RAW"), -2,2,0.5) +
     facet_grid(~measurement, labeller = labeller(measurement = label_parsed))   +
-    labs(title = "ts_HZ_seas_raw", x = "", y = "", fill = expression(paste("LLS (d ?",yr^-1,")", sep = "")))
+    labs(title = "ts_HZ_seas_raw", x = "", y = "", fill = expression(paste("LLS (d °",yr^-1,")", sep = "")))
 
   # PLOT CORRECTED SEASONAL HYDROZONE
   zone_plot(ts_HZ_seas %>% filter(tel != "RAW"), -2,2,0.5) +
     facet_grid(tel+season~measurement, labeller = labeller(measurement = label_parsed))   +
-    labs(title = "mod_lm_zone_seas_mean", x = "", y = "", fill = expression(paste("LLS (d ?",yr^-1,")", sep = "")))
+    labs(title = "mod_lm_zone_seas_mean", x = "", y = "", fill = expression(paste("LLS (d °",yr^-1,")", sep = "")))
 
   # PLOT CORRECTED SEASONAL HYDROZONE AND ELEVATION
-  zone_plot(ts_HZgrZ_seas %>% filter(tel == "RAW"), -2,2,0.5) +
-    facet_grid(tel+measurement~grZ, labeller = labeller(measurement = label_parsed))   +
-    labs(title = "mod_lm_zone_seas_mean", x = "", y = "", fill = expression(paste("LLS (d ",yr^-1,")", sep = "")))
+  zone_plot(ts_HZgrZ_seas %>% filter(tel == "RAW"), -2,2,0.5) + 
+    facet_grid(measurement~grZ, labeller = labeller(measurement = label_parsed))   +
+    labs(x = "", y = "", fill = expression(paste("LLS (d ",yr^-1,")", sep = "")))
 
-    ggsave(filename = paste(getwd(),"/5_Draft/Figures/", "ts_HZgrZ_raw", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.pdf"), sep = ""), height = 8, device = "pdf")
+    ggsave(filename = paste(getwd(),"/Results/Figures/", "fig12_ts_HZgrZ_raw", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.pdf"), sep = ""), height = 6, width = 10, device = "pdf")
 
   # PLOT CORRECTED SEASONAL HYDROZONE AND ELEVATION
   zone_plot(ts_HZgrZ_seas %>% filter(tel != "RAW"), -2,2,0.5) +
-    facet_grid(tel+season~measurement+grZ, labeller = labeller(measurement = label_parsed))   +
-    labs(title = "mod_lm_zone_seas_mean", x = "", y = "", fill = expression(paste("LLS (d ?",C^-1,")", sep = "")))
+    facet_grid(season~measurement+grZ, labeller = labeller(measurement = label_parsed))   +
+    labs(title = "mod_lm_zone_seas_mean", x = "", y = "", fill = expression(paste("LLS (d °",C^-1,")", sep = "")))
 
-    ggsave(filename = paste(getwd(),"/5_Draft/Figures/", "ts_HZgrZ_seas_detr", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.pdf"), sep = ""), height = 8, device = "pdf")
+    ggsave(filename = paste(getwd(),"/Results/Figures/", "ts_HZgrZ_seas_detr", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.pdf"), sep = ""), height = 8, device = "pdf")
