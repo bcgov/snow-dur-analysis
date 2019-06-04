@@ -12,21 +12,32 @@
 
 # PLOT ASWS STATION VS MODIS ERROR
 
-# asws = read.csv("corr_err_dist_bw2_s15_e10.csv")
-asws.m= gather(asws,"measurement","value")
-asws.m$measurement = ordered(asws.m$measurement, levels = c("SD[ON]","SD[OFF]","SD[DUR]"), labels = msm_name)
+# CALIBRATION DATA (75%)
+asws_cal.m= gather(asws,"measurement","value") %>% 
+  mutate(dat = "Calibration (75%)")
+asws_cal.m$measurement = ordered(asws_cal.m$measurement, levels = c("SD[ON]","SD[OFF]","SD[DUR]"), labels = msm_name) 
 
+# VALIDATION DATA (25%)
+asws_val.m= gather(asws_val,"measurement","value") %>% 
+  mutate(dat = "Validation (25%)")
+asws_val.m$measurement = ordered(asws_val.m$measurement, levels = c("SD[ON]","SD[OFF]","SD[DUR]"), labels = msm_name) 
+  
+
+# MERGE 
+asws.m = rbind(asws_cal.m, asws_val.m)
+
+# 
 print("ME")
-asws.m %>% group_by(measurement) %>% 
+asws.m %>% group_by(measurement, dat) %>% 
   summarize(meanabs = mean(value))
 
 print("MAE")
-asws.m %>% group_by(measurement) %>% 
+asws.m %>% group_by(measurement, dat) %>% 
   summarize(meanabs = mean(abs(value)))
 
 ggplot(asws.m, aes(value)) +
   geom_density(aes(), fill = "grey", alpha = 0.8) +
-  facet_grid(~measurement, labeller = labeller(measurement = label_parsed)) +
+  facet_grid(dat~measurement, labeller = labeller(measurement = label_parsed)) +
   # geom_vline(aes(xintercept = median(value))) +
   # geom_vline(aes(xintercept = mean(value)), linetype = 2) +
   theme_few(base_size = 20) +
@@ -34,7 +45,7 @@ ggplot(asws.m, aes(value)) +
   scale_x_continuous(breaks = seq(-100,100,25), limits = c(-100,100)) +
   labs(x = "MODIS - ASWS Difference (days)", y = "Density")
 
-# ggsave(filename = paste(getwd(),"/Results/Figures/", "fig05_error_", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.pdf"), sep = ""), width = 16, device = "pdf")
+ggsave(filename = paste(getwd(),"/Results/Figures/", "fig05_error_", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.pdf"), sep = ""), width = 16, height = 7, device = "pdf")
 
 
 

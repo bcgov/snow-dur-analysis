@@ -17,9 +17,9 @@
     rm(list=ls(all=TRUE))
 
   # SET WD LAPTOP vs WORK MACHINE
-    # setwd("G:/Dropbox/FLNRO_p1/Research_Cryosphere/Project_Snow/Git_Snow_MODIS/")
+    setwd("G:/Dropbox/FLNRO_p1/Research_Cryosphere/Project_Snow/Git_Snow_MODIS/")
     # setwd("C:/Users/bevington/Dropbox/Git_Snow_MODIS_copy/")
-    setwd("C:/Users/bevington/Dropbox/FLNRO_p1/Research_Cryosphere/Project_Snow/Git_Snow_MODIS_copy")
+    # setwd("C:/Users/bevington/Dropbox/FLNRO_p1/Research_Cryosphere/Project_Snow/Git_Snow_MODIS_copy")
   
 #### 1: LOAD LIBRARIES ####
 
@@ -66,9 +66,13 @@
 
   # IMPORT ASWS / MODIS DIFFERENCE
 
-    asws = as_tibble(read.csv("Data/ASWS/OUT/ASWS_Error_bw2_thr30.csv")) 
+    asws = as_tibble(read.csv("Data/ASWS/OUT/ASWS_Error_bw2_thr30.csv")) %>% select(-X)
     names(asws) = c("Station","Year","SD[ON]","SD[OFF]","SD[DUR]")
     asws = asws %>%  select(contains("SD"))
+
+    asws_val = as_tibble(read.csv("Data/ASWS/OUT/ASWS_Error_bw2_thr30_val.csv"))  %>% select(-X)
+    names(asws_val) = c("Station","Year","SD[ON]","SD[OFF]","SD[DUR]")
+    asws_val = asws_val %>%  select(contains("SD"))
 
 #### 3: DEFINE FUNCTIONS ####
 

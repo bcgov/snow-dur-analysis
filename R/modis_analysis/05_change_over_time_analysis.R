@@ -29,7 +29,7 @@ mod_lm_zoneZ_seas_mean$measurement = ordered(mod_lm_zoneZ_seas_mean$measurement,
 mod_lm_zoneZ_seas_mean$season = ordered(mod_lm_zoneZ_seas_mean$season, levels = season_name, labels = season_name)
 
 
- = function(raw_df, raw_lm, groups) {
+adjuster = function(raw_df, raw_lm, groups) {
 
   # raw_df = df_zone_year_mean
   # raw_lm = mod_lm_zone_year_mean %>% select(-year, -days, -index) %>% filter(!is.na(HYDROLOGICZONE_NAME))
@@ -103,7 +103,7 @@ give.n <- function(x){
   ts_HZgrZ_seas = adjuster(raw_df = df_zoneZ_seas_mean %>% filter(!is.na(HYDROLOGICZONE_NAME)),
                            raw_lm = mod_lm_zoneZ_seas_mean %>% filter(!is.na(HYDROLOGICZONE_NAME)),
                            groups = c(zone_name,"grZ","measurement","season"))
-                           # write.csv(ts_HZgrZ_seas, paste(getwd(),"/Results/Tables/", "sup18_ts_HZgrZ_seas", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.csv"), sep = ""))
+                           write.csv(ts_HZgrZ_seas, paste(getwd(),"/Results/Tables/", "sup18_ts_HZgrZ_seas", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.csv"), sep = ""))
 
 # Plotting
 
@@ -128,11 +128,10 @@ give.n <- function(x){
     facet_grid(measurement~grZ, labeller = labeller(measurement = label_parsed))   +
     labs(x = "", y = "", fill = expression(paste("LLS (d ",yr^-1,")", sep = "")))
 
-    ggsave(filename = paste(getwd(),"/Results/Figures/", "fig12_ts_HZgrZ_raw", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.pdf"), sep = ""), height = 6, width = 10, device = "pdf")
+    ggsave(filename = paste(getwd(),"/Results/Figures/", "fig12_ts_HZgrZ_raw", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.pdf"), sep = ""), height = 7, width = 12, device = "pdf")
 
   # PLOT CORRECTED SEASONAL HYDROZONE AND ELEVATION
   zone_plot(ts_HZgrZ_seas %>% filter(tel != "RAW"), -2,2,0.5) +
     facet_grid(season~measurement+grZ, labeller = labeller(measurement = label_parsed))   +
     labs(title = "mod_lm_zone_seas_mean", x = "", y = "", fill = expression(paste("LLS (d °",C^-1,")", sep = "")))
 
-    ggsave(filename = paste(getwd(),"/Results/Figures/", "ts_HZgrZ_seas_detr", ns, "_", format(x = now(), format = "%Y%m%d%H%M%S.pdf"), sep = ""), height = 8, device = "pdf")

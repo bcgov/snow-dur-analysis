@@ -5,7 +5,6 @@ rm(list=ls(all=T))
 setwd("C:/Users/hgleason/Dropbox/FLNRO/Projects/MODIS_Snow_Dur_Prj/Git_Snow_MODIS/Data/ASWS/OUT/")
 
 data <- read.csv("C:/Users/hgleason/Dropbox/FLNRO/Projects/MODIS_Snow_Dur_Prj/Git_Snow_MODIS/Data/ASWS/OUT/Snow_Dur_Comp_it1_dlta3_np.csv")
-data <- subset(data,mddur>=0 & sddur>=0 & sdon != swesrt & sdoff != sweend)
 
 stations<-unique(data$station)
 
@@ -19,13 +18,14 @@ print(length(rand))
 thrsh<- round(0.75*length(rand))
 
 cal_stats<-stations[rand<thrsh]
-val_stats<-stations[rand>thrsh]
+val_stats<-stations[rand>=thrsh]
 
 cal<- data[data$station %in% cal_stats,]
 
 val<- data[data$station %in% val_stats,]
 
 
+data <- subset(data,mddur>=0 & sddur>=0 & sdon != swesrt & sdoff != sweend)
 
 summary(data)
 
@@ -104,7 +104,8 @@ unbia %>%
   ggplot() + geom_histogram(aes(cor_off),color = "blue", fill = "pink")
 
 
-sub <- subset(unbia, bw ==.20 & thresh == 30)
+sub <- subset(unbia, bw ==.20 & thresh == 30) %>%
+  dplyr::filter(station %in% val_stats)
 
 
 diff<-sub %>%
@@ -120,7 +121,7 @@ summary(sub$cor_off)
 summary(sub$cor_dur)
 
 
-write.csv(diff, 'ASWS_Error_bw2_thr30.csv')
+write.csv(diff, 'ASWS_Error_bw2_thr30_val.csv')
 
 
 
