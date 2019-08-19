@@ -5,19 +5,19 @@ British Columbia Snow Duration Analysis
 
 ### Overview
 
-Series of code with the purpose of utilizing the Moderate Resolution Imaging Spectro-Radiometer (MODIS) M*D10A10 datasets for deriving snow duration metrics over BC during the period 2002 - Present. Additional analysis is carried out to explore the influence of major climate modes including the El Nino Southern Oscillation and the Pacific Decadal Oscillation on inter-annual snow cover variability.  
+Series of code with the purpose of utilizing the Moderate Resolution Imaging Spectro-Radiometer (MODIS) M*D10A10 datasets for deriving snow duration metrics over BC during the period 2002 - 2018. Additional analysis is carried out to explore the influence of major climate modes including the El Nino Southern Oscillation and the Pacific Decadal Oscillation on inter-annual snow cover variability.  
 
 ### Project Status
 
-This project is under active development.
+This project is completed and has been published in The Cryosphere [https://www.the-cryosphere-discuss.net/tc-2019-61/](https://www.the-cryosphere-discuss.net/tc-2019-61/).
 
-### Goals/Roadmap
+### Workflow
 
-The goal is to explore linkages between variables (climatic, topographic) and the timing / duration of snow cover over British Columbia using time series of satellite at moderate resolution. Additional products of this work include datasets of annual snow duration over the Province of BC over the period 2002 - 2018 and a number of scripts that can be used for related or unrelated satellite image time series analysis. 
+We use Google Earth Engine to download the daily MODIS snow cover product, then Python to fit the LOWESS time series interpolation, and then R to analyze the data start, end and duration of snow cover.
 
 ### Getting Help or Reporting an Issue
 
-To report bugs/issues/feature requests, please file an [issue](https://github.com/bcgov/snow-dur-analysis/issues/).
+To report bugs/issues/feature requests, please file an [issue](https://github.com/bcgov/snow-dur-analysis/issues/) or contact alexandre.bevington@gov.bc.ca. 
 
 ### How to Contribute
 
