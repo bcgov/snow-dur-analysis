@@ -10,6 +10,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
+```{r}
 library(tidyverse)
 library(bcmaps)
 
@@ -18,4 +19,5 @@ hz <- hydrozones() # Hydrozones
 bec <- bec() # ALL BEC
 bec_zone <- bec %>% group_by(ZONE) # ALL BEC by Zone
 bec_subzone <- bec %>% group_by(SUBZONE) # ALL BEC by SubZone
+```
 
