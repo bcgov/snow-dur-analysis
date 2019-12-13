@@ -1,1 +1,9 @@
+library(tidyverse)
+library(bcmaps)
+
+nrd <- nr_districts() # NR Districts
+hz <- hydrozones() # Hydrozones
+bec <- bec() # ALL BEC
+bec_zone <- bec %>% group_by(ZONE) # ALL BEC by Zone
+bec_subzone <- bec %>% group_by(SUBZONE) # ALL BEC by SubZone
 
