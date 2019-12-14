@@ -13,11 +13,23 @@
 ```{r}
 library(tidyverse)
 library(bcmaps)
+library(sf)
 
 nrd <- nr_districts() # NR Districts
-hz <- hydrozones() # Hydrozones
-bec <- bec() # ALL BEC
-bec_zone <- bec %>% group_by(ZONE) # ALL BEC by Zone
-bec_subzone <- bec %>% group_by(SUBZONE) # ALL BEC by SubZone
+#hz <- hydrozones() # Hydrozones
+#bec <- bec() # ALL BEC
+#bec_zone <- bec %>% group_by(ZONE) # ALL BEC by Zone
+#bec_subzone <- bec %>% group_by(SUBZONE) # ALL BEC by SubZone
 ```
 
+
+sd_samp_pts<-st_read('C:/Users/hgleason/Dropbox/FLNRO/Projects/snow-dur-analysis/R/snow_summaries_note/SD_Random_Samples.gpkg')
+
+plot(sd_samp_pts)
+
+
+sd_by_nrd <- sd_samp_pts %>%
+  st_join(nrd, join = st_intersects) %>%
+  group_by(DISTRICT_NAME) %>%
+  summarise(mean_sddur = mean(sddur))
+  
