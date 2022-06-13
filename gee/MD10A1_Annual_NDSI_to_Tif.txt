@@ -105,7 +105,7 @@ var annual_ndsi_series = year_list
 //#################################################################
 
 //For each year defined from MODIS start (2002) to end_year
-for(var year = 2002; year<=2017; year++)
+for(var year = 2002; year<=end_year; year++)
 {
   //Get the annual daily collection at the year index (i.e., year - 2002)
   var annual_coll = ee.List(annual_ndsi_series.get(year-2002));
